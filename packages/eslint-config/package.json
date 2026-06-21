@@ -1,0 +1,24 @@
+{
+  "name": "@ai-coo/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./base.js",
+  "exports": {
+    ".": "./base.js",
+    "./nest": "./nest.js",
+    "./next": "./next.js"
+  },
+  "scripts": {
+    "build": "echo \"No build needed\" && exit 0",
+    "lint": "echo \"No lint needed\" && exit 0",
+    "test": "echo \"No tests\" && exit 0"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8",
+    "@typescript-eslint/parser": "^8",
+    "eslint": "^9",
+    "eslint-config-prettier": "^10",
+    "eslint-plugin-import": "^2.31",
+    "typescript-eslint": "^8"
+  }
+}
