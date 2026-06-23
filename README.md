@@ -1,88 +1,93 @@
 # AI COO — AI Chief Operating Officer for Indonesian UMKM
 
-AI COO is an AI-powered business operations assistant for Indonesian micro, small, and medium enterprises (UMKM). It tells business owners, in plain Bahasa Indonesia, what to do next and why — every day.
+AI COO is a localized, AI-powered business operations assistant built specifically for Indonesian micro, small, and medium enterprises (UMKM). It analyzes daily business metrics and provides actionable, clear advice in Bahasa Indonesia — answering the age-old question: _"What should I do next to grow?"_
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 15, TypeScript, Tailwind CSS v4, shadcn/ui |
-| Backend | NestJS 11, TypeScript, Clean Architecture |
-| Database | PostgreSQL 16 (Prisma ORM) |
-| Cache/Queue | Redis 7, BullMQ |
-| AI | OpenAI (behind provider abstraction) |
-| Monorepo | pnpm workspaces + Turborepo |
+| Domain          | Technology                                                                    |
+| --------------- | ----------------------------------------------------------------------------- |
+| **Frontend**    | Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, Framer Motion |
+| **Backend API** | NestJS 11, TypeScript, Clean Architecture (Use Cases, Repository Pattern)     |
+| **Database**    | PostgreSQL 16 managed with Prisma ORM                                         |
+| **Monorepo**    | pnpm workspaces + Turborepo                                                   |
+| **Shared**      | Zod (Validation), TypeScript definitions (`@ai-coo/shared-types`)             |
 
-## Quick Start
+## Quick Start Guide
 
 ### Prerequisites
 
-- **Node.js** ≥ 20
-- **pnpm** ≥ 9
-- **Docker Desktop** (for PostgreSQL + Redis)
+- **Node.js**: v20 or higher
+- **pnpm**: v9 or higher
+- **Docker**: For running the local PostgreSQL and Redis instances.
 
-### Setup
+### Setup and Running Locally
 
 ```bash
 # 1. Clone the repository
 git clone <repo-url> ai-coo
 cd ai-coo
 
-# 2. Copy environment variables
+# 2. Setup Environment Variables
 cp .env.example .env
+# Edit .env to add your configuration parameters:
+# - OPENAI_API_KEY: Paste your real OpenAI API key (server-side only, do NOT prefix with NEXT_PUBLIC_).
+# - REDIS_HOST & REDIS_PORT: Configure your Redis server connection details (defaults to localhost:6379).
 
-# 3. Start infrastructure (PostgreSQL + Redis)
+# 3. Start Database & Redis Infrastructure
 docker compose up -d
 
-# 4. Install dependencies
+# 4. Install Dependencies
 pnpm install
 
-# 5. Run database migrations (after Phase 2)
-# pnpm --filter api prisma migrate dev
+# 5. Initialize the Database
+pnpm --filter @ai-coo/database db:push
 
-# 6. Start development servers
+# 6. Start the Development Server
 pnpm dev
 ```
 
-This starts:
-- **Frontend** → http://localhost:3000
-- **Backend API** → http://localhost:3001
-- **Health Check** → http://localhost:3001/health
+### URLs
 
-### Available Scripts
+- **Frontend Dashboard**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: [http://localhost:3001](http://localhost:3001)
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start all apps in development mode |
-| `pnpm build` | Build all packages and apps |
-| `pnpm lint` | Run ESLint across all packages |
-| `pnpm test` | Run unit tests |
-| `pnpm test:e2e` | Run end-to-end tests |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check formatting without writing |
+## Workspace Architecture
 
-## Project Structure
+This project is structured as a powerful Monorepo to maintain strict boundaries while sharing core logic.
 
 ```
 ai-coo/
 ├── apps/
-│   ├── api/              # NestJS backend (Clean Architecture)
-│   └── web/              # Next.js frontend (App Router)
+│   ├── api/                 # NestJS 11 backend: The core business logic
+│   └── web/                 # Next.js 15 frontend: The presentation layer
 ├── packages/
-│   ├── shared-types/     # Shared TypeScript enums & types
-│   ├── validation/       # Shared Zod schemas
-│   └── eslint-config/    # Shared ESLint configuration
-├── docker-compose.yml    # PostgreSQL + Redis
-├── turbo.json            # Build pipeline
-└── pnpm-workspace.yaml   # Workspace definition
+│   ├── database/            # Prisma schema, migrations, and generated client
+│   ├── shared-types/        # Shared DTOs and Interfaces
+│   ├── validation/          # Shared Zod validation schemas
+│   └── eslint-config/       # Shared linting rules
+└── turbo.json               # Monorepo build orchestrator
 ```
 
-## Architecture
+## Useful Commands
 
-- **Backend**: Clean Architecture with DDD-lite bounded contexts. See [Build Spec](./BUILD_SPEC.md) §7.2.
-- **Frontend**: Feature-based structure with Server Components and Server Actions.
-- **Multi-tenancy**: Row-level isolation via mandatory `companyId` on all tenant-scoped tables, with PostgreSQL RLS as defense-in-depth.
+| Command                                   | Action                                            |
+| ----------------------------------------- | ------------------------------------------------- |
+| `pnpm dev`                                | Starts both the web and api servers in watch mode |
+| `pnpm turbo build`                        | Type-checks and builds all workspace packages     |
+| `pnpm turbo lint`                         | Lints the entire codebase                         |
+| `pnpm test`                               | Runs unit tests across all workspace packages     |
+| `pnpm test:e2e`                           | Runs E2E integration tests in `apps/api`          |
+| `pnpm --filter @ai-coo/database generate` | Regenerates the Prisma Client                     |
+
+## Redis & AI Operations
+
+AI COO utilizes Redis for two primary tasks:
+
+1. **BullMQ Background Scheduler**: Schedules the daily operations brief generation pipeline at `06:00 WIB` (Asia/Jakarta time) across all registered companies.
+2. **Operations Insights Caching**: Caches the generated operation insights to guarantee fast, real-time responses. If Redis or OpenAI fails, the system automatically falls back to the last cached value or the latest historical database entry.
+
+Ensure Redis is running by running `docker compose up -d` or checking the background status on your system.
 
 ## License
 
-Proprietary. All rights reserved.
+Proprietary software. All rights reserved.

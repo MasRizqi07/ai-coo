@@ -17,6 +17,33 @@ export interface ApiMeta {
   total?: number;
 }
 
+export interface Customer {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  totalSpent: number;
+  lastPurchaseAt?: Date;
+  createdAt: Date;
+}
+
+export interface SaleItem {
+  id: string;
+  saleId: string;
+  productId: string | null;
+  quantity: number;
+  priceAtSale: number;
+}
+
+export interface Sale {
+  id: string;
+  amount: number;
+  date: Date;
+  customerId?: string;
+  customer?: Customer;
+  items?: SaleItem[];
+}
+
 /**
  * Standard API error response envelope.
  * Every error response follows this shape (spec §10.1).

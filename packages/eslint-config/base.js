@@ -4,9 +4,7 @@ const tseslint = require('typescript-eslint');
 module.exports = tseslint.config(
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      ...tseslint.configs.recommended,
-    ],
+    extends: [...tseslint.configs.recommended],
     rules: {
       // Spec §16: No `any` as escape hatch
       '@typescript-eslint/no-explicit-any': 'error',

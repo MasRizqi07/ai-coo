@@ -8,9 +8,13 @@
   },
   "scripts": {
     "dev": "turbo dev",
+    "start": "turbo start",
+    "start:dev": "turbo dev",
+    "start:prod": "pnpm --filter @ai-coo/api start:prod",
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",
+    "test:cov": "turbo test:cov",
     "test:e2e": "turbo test:e2e",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
