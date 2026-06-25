@@ -18,7 +18,8 @@ AI COO is a localized, AI-powered business operations assistant built specifical
 
 - **Node.js**: v20 or higher
 - **pnpm**: v9 or higher
-- **Docker**: For running the local PostgreSQL and Redis instances.
+- **PostgreSQL**: A running instance of PostgreSQL 16
+- **Redis**: A running instance of Redis for BullMQ jobs
 
 ### Setup and Running Locally
 
@@ -34,7 +35,8 @@ cp .env.example .env
 # - REDIS_HOST & REDIS_PORT: Configure your Redis server connection details (defaults to localhost:6379).
 
 # 3. Start Database & Redis Infrastructure
-docker compose up -d
+# Ensure your local or remote PostgreSQL server is running.
+# Ensure your local Redis server is running (e.g. `redis-server` or via WSL/Windows service).
 
 # 4. Install Dependencies
 pnpm install
@@ -86,7 +88,7 @@ AI COO utilizes Redis for two primary tasks:
 1. **BullMQ Background Scheduler**: Schedules the daily operations brief generation pipeline at `06:00 WIB` (Asia/Jakarta time) across all registered companies.
 2. **Operations Insights Caching**: Caches the generated operation insights to guarantee fast, real-time responses. If Redis or OpenAI fails, the system automatically falls back to the last cached value or the latest historical database entry.
 
-Ensure Redis is running by running `docker compose up -d` or checking the background status on your system.
+Ensure Redis is running natively on your system (e.g., using `redis-server` on Linux/macOS or WSL on Windows) before starting the application, as BullMQ will fail to connect otherwise.
 
 ## License
 

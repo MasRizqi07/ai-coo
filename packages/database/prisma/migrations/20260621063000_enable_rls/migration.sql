@@ -49,3 +49,12 @@ CREATE POLICY "tenant_isolation_insights" ON "insights"
     TO PUBLIC
     USING (company_id = current_setting('app.current_tenant_id', true))
     WITH CHECK (company_id = current_setting('app.current_tenant_id', true));
+
+ALTER TABLE "sale_items" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "sale_items" FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_sale_items" ON "sale_items";
+CREATE POLICY "tenant_isolation_sale_items" ON "sale_items"
+    AS PERMISSIVE FOR ALL
+    TO PUBLIC
+    USING (EXISTS (SELECT 1 FROM "sales" WHERE "sales".id = "sale_items".sale_id AND "sales".company_id = current_setting('app.current_tenant_id', true)))
+    WITH CHECK (EXISTS (SELECT 1 FROM "sales" WHERE "sales".id = "sale_items".sale_id AND "sales".company_id = current_setting('app.current_tenant_id', true)));
