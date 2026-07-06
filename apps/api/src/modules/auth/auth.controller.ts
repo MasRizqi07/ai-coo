@@ -3,7 +3,9 @@ import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from '@ai-coo/shared-types';
 import { registerSchema, loginSchema } from '@ai-coo/validation';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { Public } from '../../common/decorators/public.decorator';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

@@ -48,7 +48,7 @@ export class PrismaSaleRepository implements ISaleRepository {
       throw new Error('Tenant mismatch in sale save');
     }
 
-    await this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async (tx: any) => {
       let totalAmount = 0;
       const saleItemsToCreate = [];
 
@@ -131,7 +131,7 @@ export class PrismaSaleRepository implements ISaleRepository {
         customer: true,
       },
     });
-    return records.map((r) => this.mapToDomain(r));
+    return records.map((r: any) => this.mapToDomain(r));
   }
 
   async findById(id: string): Promise<Sale | null> {

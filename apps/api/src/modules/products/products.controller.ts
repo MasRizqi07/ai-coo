@@ -22,7 +22,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { DeleteProductUseCase } from './application/use-cases/delete-product.use-case';
 
 @Controller('products')
-@UseGuards(JwtAuthGuard)
 @UseInterceptors(TenantInterceptor)
 export class ProductsController {
   constructor(

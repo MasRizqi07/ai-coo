@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Public } from '../../common/decorators/public.decorator';
 
 /**
  * Health check endpoint (spec §14).
@@ -8,6 +9,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
  * In Phase 2+, this will also check DB and Redis connectivity.
  */
 @ApiTags('Health')
+@Public()
 @Controller('health')
 export class HealthController {
   @Get()

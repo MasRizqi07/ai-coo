@@ -1,14 +1,12 @@
-import { Controller, Get, Post, Body, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors } from '@nestjs/common';
 import { CreateSaleUseCase } from './application/use-cases/create-sale.use-case';
 import { GetSalesUseCase } from './application/use-cases/get-sales.use-case';
 import { CreateSaleDto } from './dto/create-sale.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { TenantInterceptor } from '../../common/interceptors/tenant.interceptor';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('Sales')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @UseInterceptors(TenantInterceptor)
 @Controller('sales')
 export class SalesController {

@@ -6,7 +6,6 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagg
 
 @ApiTags('AI Insights')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @UseInterceptors(TenantInterceptor)
 @Controller('ai-insights')
 export class AiInsightsController {

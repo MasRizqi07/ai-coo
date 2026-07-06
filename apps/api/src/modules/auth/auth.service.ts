@@ -25,7 +25,7 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(dto.password, saltRounds);
 
     // Create Company and Owner in a transaction
-    const result = await this.prisma.$transaction(async (prisma) => {
+    const result = await this.prisma.$transaction(async (prisma: any) => {
       const company = await prisma.company.create({
         data: {
           name: dto.companyName,
