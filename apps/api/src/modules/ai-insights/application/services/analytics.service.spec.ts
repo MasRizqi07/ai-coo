@@ -2,16 +2,23 @@ import { AnalyticsService, AnalyticsInput } from './analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
+  // Fixed reference: 2025-06-15T00:00:00.000Z — a stable UTC midnight
+  const FIXED_NOW = new Date('2025-06-15T00:00:00.000Z').getTime();
 
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(FIXED_NOW));
     service = new AnalyticsService();
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('should correctly aggregate metrics', () => {
-    const now = new Date();
-    const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-    const tenDaysAgo = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
-    const fifteenDaysAgo = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000);
+    const threeDaysAgo = new Date(FIXED_NOW - 3 * 24 * 60 * 60 * 1000);
+    const tenDaysAgo = new Date(FIXED_NOW - 10 * 24 * 60 * 60 * 1000);
+    const fifteenDaysAgo = new Date(FIXED_NOW - 15 * 24 * 60 * 60 * 1000);
 
     const mockData: AnalyticsInput = {
       customers: [
