@@ -1,4 +1,5 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { Logger } from '@antigravity/logger';
 import { z } from 'zod';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
@@ -40,7 +41,7 @@ export type InsightPayload = z.infer<typeof insightPayloadSchema>;
 
 @Injectable()
 export class GenerateInsightsUseCase {
-  private readonly logger = new Logger(GenerateInsightsUseCase.name);
+  private readonly logger = new Logger({ service: 'GenerateInsightsUseCase' });
   private readonly redis: Redis;
 
   constructor(
@@ -76,7 +77,7 @@ export class GenerateInsightsUseCase {
     } catch (error) {
       this.logger.error(
         `Failed to generate fresh AI insight for company ${companyId}. Attempting stale cache fallback.`,
-        (error as any).stack || error,
+        error,
       );
 
       // 2. Fallback to cache
