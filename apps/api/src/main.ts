@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import { standardHelmetOptions } from '@antigravity/security';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -15,7 +16,7 @@ async function bootstrap() {
   const frontendUrl = configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
 
   // Security: Helmet sets various HTTP headers for protection
-  app.use(helmet());
+  app.use(helmet(standardHelmetOptions));
 
   // CORS: Only allow the frontend origin
   app.enableCors({
