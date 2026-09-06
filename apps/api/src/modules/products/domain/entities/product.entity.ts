@@ -5,8 +5,10 @@ export interface ProductProps {
   companyId: string;
   name: string;
   sku?: string;
+  category?: string | null;
   price: Money;
   stockQuantity: number;
+  minStockLevel?: number;
   deletedAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -31,6 +33,8 @@ export class Product extends Entity<ProductProps> {
     return new Product(
       {
         ...props,
+        category: props.category ?? 'Umum',
+        minStockLevel: props.minStockLevel ?? 10,
         deletedAt: props.deletedAt ?? null,
         createdAt: props.createdAt ?? new Date(),
         updatedAt: props.updatedAt ?? new Date(),
@@ -47,8 +51,20 @@ export class Product extends Entity<ProductProps> {
     return this.props.name;
   }
 
+  public get sku(): string | undefined {
+    return this.props.sku;
+  }
+
+  public get category(): string | null | undefined {
+    return this.props.category;
+  }
+
   public get stockQuantity(): number {
     return this.props.stockQuantity;
+  }
+
+  public get minStockLevel(): number {
+    return this.props.minStockLevel ?? 10;
   }
 
   public get price(): Money {

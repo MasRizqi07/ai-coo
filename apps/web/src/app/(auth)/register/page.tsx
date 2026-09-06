@@ -79,9 +79,13 @@ export default function RegisterPage() {
             required
             disabled={loading}
           >
-            <option value="RETAIL">Retail</option>
-            <option value="FNB">Food & Beverage</option>
-            <option value="SERVICES">Services</option>
+            <option value="WARKOP">Warkop / Cafe / Kuliner</option>
+            <option value="RETAIL">Toko Kelontong / Retail / Swalayan</option>
+            <option value="TOKO_BANGUNAN">Toko Bangunan & Material</option>
+            <option value="LAUNDRY">Jasa Laundry</option>
+            <option value="BENGKEL">Bengkel & Sparepart</option>
+            <option value="DISTRIBUTOR">Distributor / Grosir</option>
+            <option value="OTHER">Lainnya / Umum</option>
           </select>
         </div>
 

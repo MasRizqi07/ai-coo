@@ -11,10 +11,13 @@ export async function createProductAction(formData: FormData) {
 
     const dto = {
       name: formData.get('name') as string,
-      sku: formData.get('sku') as string,
-      description: (formData.get('description') as string) || undefined,
+      sku: (formData.get('sku') as string) || undefined,
+      category: (formData.get('category') as string) || 'Umum',
       price: parseFloat(formData.get('price') as string),
       stockQuantity: parseInt(formData.get('stockQuantity') as string, 10),
+      minStockLevel: formData.get('minStockLevel')
+        ? parseInt(formData.get('minStockLevel') as string, 10)
+        : 10,
     };
 
     await fetchApi('/products', {
@@ -31,14 +34,14 @@ export async function createProductAction(formData: FormData) {
   }
 }
 
-export async function restockProductAction(productId: string, quantityToAdd: number) {
+export async function restockProductAction(productId: string, quantity: number) {
   try {
     const token = await getToken();
     if (!token) throw new Error('Unauthorized');
 
     await fetchApi(`/products/${productId}/restock`, {
-      method: 'PATCH',
-      body: JSON.stringify({ quantityToAdd }),
+      method: 'POST',
+      body: JSON.stringify({ quantity }),
       token,
     });
 

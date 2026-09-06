@@ -23,6 +23,10 @@ export class SalesController {
     return {
       id: sale.id,
       amount: sale.amount,
+      paymentMethod: sale.paymentMethod,
+      paidAmount: sale.paidAmount,
+      changeAmount: sale.changeAmount,
+      notes: sale.notes,
       date: sale.date,
       customerId: sale.customerId,
       customer: sale.props.customer,
@@ -41,6 +45,10 @@ export class SalesController {
     return sales.map((sale) => ({
       id: sale.id,
       amount: sale.amount,
+      paymentMethod: sale.paymentMethod,
+      paidAmount: sale.paidAmount,
+      changeAmount: sale.changeAmount,
+      notes: sale.notes,
       date: sale.date,
       customerId: sale.customerId,
       customer: sale.props.customer,

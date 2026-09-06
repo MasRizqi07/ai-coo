@@ -85,9 +85,9 @@ export class AnalyticsService {
         };
       });
 
-    // 4. Low Stock Products (< 15 units)
+    // 4. Low Stock Products (stock < minStockLevel or < 15)
     const lowStockProducts = data.products
-      .filter((p) => p.stockQuantity < 15)
+      .filter((p) => p.stockQuantity < (p.minStockLevel ?? 15))
       .map((p) => ({
         name: p.name,
         stockQuantity: p.stockQuantity,

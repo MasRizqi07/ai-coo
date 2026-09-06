@@ -17,6 +17,8 @@ export interface ApiMeta {
   total?: number;
 }
 
+import { PaymentMethod, BusinessType, Role } from './enums';
+
 export interface Customer {
   id: string;
   name: string;
@@ -27,21 +29,68 @@ export interface Customer {
   createdAt: Date;
 }
 
+export interface Product {
+  id: string;
+  name: string;
+  sku?: string | null;
+  category?: string | null;
+  price: number;
+  stockQuantity: number;
+  minStockLevel: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface SaleItem {
   id: string;
   saleId: string;
   productId: string | null;
   quantity: number;
   priceAtSale: number;
+  product?: {
+    name: string;
+  };
 }
 
 export interface Sale {
   id: string;
   amount: number;
+  paymentMethod: PaymentMethod;
+  paidAmount?: number | null;
+  changeAmount?: number | null;
+  notes?: string | null;
   date: Date;
-  customerId?: string;
-  customer?: Customer;
+  customerId?: string | null;
+  customer?: Customer | null;
   items?: SaleItem[];
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  companyId: string;
+  company: {
+    id: string;
+    name: string;
+    businessType: BusinessType;
+    phone?: string | null;
+    address?: string | null;
+  };
+}
+
+export interface DailyRevenuePoint {
+  date: string; // YYYY-MM-DD
+  displayDate: string; // e.g. "Senin, 01"
+  revenue: number;
+  salesCount: number;
+}
+
+export interface DashboardChartsResponse {
+  revenueTrend: DailyRevenuePoint[];
+  totalWeekRevenue: number;
+  revenueChangePct: number;
 }
 
 /**
@@ -61,10 +110,11 @@ export interface ApiErrorResponse {
  * Each action must reference a real entity (spec §6.7).
  */
 export interface InsightActionItem {
-  targetType: 'CUSTOMER' | 'PRODUCT';
+  targetType: 'CUSTOMER' | 'PRODUCT' | 'INVENTORY' | 'OTHER';
   targetName: string;
   action: string;
   reason: string;
+  whatsappMessage?: string;
 }
 
 /**
@@ -77,3 +127,4 @@ export interface InsightPayload {
   opportunities: string[];
   actionItems: InsightActionItem[];
 }
+

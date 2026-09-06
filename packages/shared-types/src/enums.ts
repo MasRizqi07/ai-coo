@@ -32,3 +32,14 @@ export enum InsightType {
   REVENUE = 'REVENUE',
   DAILY_BRIEF = 'DAILY_BRIEF',
 }
+
+/**
+ * Payment method for transactions.
+ */
+export enum PaymentMethod {
+  CASH = 'CASH',
+  QRIS = 'QRIS',
+  TRANSFER = 'TRANSFER',
+  KASBON = 'KASBON',
+}
+

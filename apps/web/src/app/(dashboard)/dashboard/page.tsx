@@ -11,14 +11,18 @@ export default async function DashboardPage() {
   }
 
   try {
-    const [stats, insight] = await Promise.all([
+    const [stats, charts, insight] = await Promise.all([
       fetchApi<any>('/dashboard/stats', { token }),
+      fetchApi<any>('/dashboard/charts', { token }).catch((err) => {
+        console.error('Failed to fetch charts data', err);
+        return null;
+      }),
       fetchApi<any>('/ai-insights/latest', { token }).catch((err) => {
         console.error('Failed to fetch AI insights', err);
         return null;
       }),
     ]);
-    return <DashboardClientView stats={stats} insight={insight} />;
+    return <DashboardClientView stats={stats} charts={charts} insight={insight} />;
   } catch (error) {
     console.error('Failed to fetch dashboard stats', error);
     // Show explicit error state — do not silently swallow failures

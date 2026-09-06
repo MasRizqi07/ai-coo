@@ -38,6 +38,10 @@ export class CreateSaleUseCase {
       companyId,
       customerId: command.dto.customerId || null,
       amount: 0, // Calculated dynamically by the repository
+      paymentMethod: command.dto.paymentMethod,
+      paidAmount: command.dto.paidAmount,
+      changeAmount: command.dto.changeAmount,
+      notes: command.dto.notes,
       items: saleItems,
     });
 

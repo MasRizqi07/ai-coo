@@ -13,4 +13,11 @@ export class DashboardController {
     const companyId = req.user.companyId;
     return this.dashboardService.getStats(companyId);
   }
+
+  @Get('charts')
+  async getCharts(@Req() req: any): Promise<any> {
+    const companyId = req.user.companyId;
+    return this.dashboardService.getCharts(companyId);
+  }
 }
+

@@ -39,8 +39,11 @@ export class ProductsController {
     return {
       id: product.id,
       name: product.name,
+      sku: product.sku,
+      category: product.category,
       price: product.price.amount,
       stockQuantity: product.stockQuantity,
+      minStockLevel: product.minStockLevel,
     };
   }
 
@@ -51,8 +54,11 @@ export class ProductsController {
     return products.map((p: any) => ({
       id: p.id,
       name: p.name,
+      sku: p.props.sku,
+      category: p.props.category || 'Umum',
       price: p.price.amount,
       stockQuantity: p.stockQuantity,
+      minStockLevel: p.props.minStockLevel || 10,
       createdAt: p.props.createdAt,
     }));
   }

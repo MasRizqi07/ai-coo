@@ -29,6 +29,9 @@ export class CreateProductUseCase {
     const product = Product.create({
       companyId,
       name: command.dto.name,
+      sku: command.dto.sku,
+      category: command.dto.category,
+      minStockLevel: command.dto.minStockLevel,
       price: Money.create(command.dto.price),
       stockQuantity: command.dto.stockQuantity,
     });

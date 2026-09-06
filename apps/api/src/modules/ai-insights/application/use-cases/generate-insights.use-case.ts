@@ -28,6 +28,7 @@ const actionItemSchema = z.object({
   target_name: z.string(),
   action: z.string(),
   reason: z.string(),
+  whatsapp_message: z.string().optional(),
 });
 
 const insightPayloadSchema = z.object({

@@ -9,6 +9,7 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { ProductsModule } from './modules/products/products.module';
 import { SalesModule } from './modules/sales/sales.module';
 import { AiInsightsModule } from './modules/ai-insights/ai-insights.module';
+import { CompaniesModule } from './modules/companies/companies.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { AiInsightsModule } from './modules/ai-insights/ai-insights.module';
     ProductsModule,
     SalesModule,
     AiInsightsModule,
+    CompaniesModule,
 
     // Health check module
     HealthModule,

@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { fetchApi } from '../../lib/api';
-import { LoginDto, RegisterDto } from '@ai-coo/shared-types';
+import { LoginDto, RegisterDto, UserProfile } from '@ai-coo/shared-types';
 
 const TOKEN_NAME = 'ai_coo_token';
 
@@ -18,7 +18,7 @@ export async function loginAction(dto: LoginDto) {
     cookieStore.set(TOKEN_NAME, response.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 15, // 15 mins for now
+      maxAge: 60 * 60 * 24, // 24 hours
       path: '/',
     });
 
@@ -39,7 +39,7 @@ export async function registerAction(dto: RegisterDto) {
     cookieStore.set(TOKEN_NAME, response.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 15, // 15 mins for now
+      maxAge: 60 * 60 * 24, // 24 hours
       path: '/',
     });
 
@@ -59,3 +59,14 @@ export async function getToken() {
   const cookieStore = await cookies();
   return cookieStore.get(TOKEN_NAME)?.value;
 }
+
+export async function getMeAction(): Promise<UserProfile | null> {
+  const token = await getToken();
+  if (!token) return null;
+  try {
+    return await fetchApi<UserProfile>('/auth/me', { token });
+  } catch {
+    return null;
+  }
+}
+
