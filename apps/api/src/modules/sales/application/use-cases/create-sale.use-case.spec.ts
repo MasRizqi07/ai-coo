@@ -59,7 +59,7 @@ describe('CreateSaleUseCase', () => {
     await expect(
       useCase.execute({
         dto: {
-          customerId: null,
+          customerId: undefined,
           paymentMethod: PaymentMethod.CASH,
           items: [{ productId: 'prod-1', quantity: 1 }],
         },
