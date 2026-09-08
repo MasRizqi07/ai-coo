@@ -16,7 +16,7 @@ export async function updateCompanyAction(dto: UpdateCompanyDto) {
       token,
     });
 
-    revalidatePath('/dashboard/settings');
+    revalidatePath('/settings');
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error: unknown) {

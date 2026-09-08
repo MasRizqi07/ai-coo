@@ -22,7 +22,7 @@ export async function createCustomerAction(formData: FormData) {
       token,
     });
 
-    revalidatePath('/dashboard/customers');
+    revalidatePath('/customers');
     revalidatePath('/dashboard'); // Update stats
     return { success: true };
   } catch (error: unknown) {
@@ -43,7 +43,7 @@ export async function deleteCustomerAction(id: string) {
       token,
     });
 
-    revalidatePath('/dashboard/customers');
+    revalidatePath('/customers');
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error: unknown) {

@@ -29,10 +29,10 @@ export function Sidebar({ isOpen = false, onClose, companyName, businessType }: 
 
   const navigation = [
     { name: 'Ringkasan', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Kasir & Penjualan', href: '/dashboard/sales', icon: Receipt },
-    { name: 'Pelanggan (CRM)', href: '/dashboard/customers', icon: Users },
-    { name: 'Inventaris Produk', href: '/dashboard/products', icon: Package },
-    { name: 'Pengaturan Usaha', href: '/dashboard/settings', icon: Settings },
+    { name: 'Kasir & Penjualan', href: '/sales', icon: Receipt },
+    { name: 'Pelanggan (CRM)', href: '/customers', icon: Users },
+    { name: 'Inventaris Produk', href: '/products', icon: Package },
+    { name: 'Pengaturan Usaha', href: '/settings', icon: Settings },
   ];
 
   return (

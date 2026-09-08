@@ -34,9 +34,9 @@ export async function createSaleAction(
       token,
     });
 
-    revalidatePath('/dashboard/sales');
-    revalidatePath('/dashboard/products');
-    revalidatePath('/dashboard/customers');
+    revalidatePath('/sales');
+    revalidatePath('/products');
+    revalidatePath('/customers');
     revalidatePath('/dashboard');
     return { success: true, sale };
   } catch (error: unknown) {

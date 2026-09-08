@@ -166,14 +166,14 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
 
         <div className="flex gap-2">
           <Link
-            href="/dashboard/sales"
+            href="/sales"
             className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
           >
             <ShoppingBag className="h-4 w-4 text-slate-950" />
             Buka Kasir POS
           </Link>
           <Link
-            href="/dashboard/products"
+            href="/products"
             className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-200 hover:bg-slate-800 transition-colors"
           >
             <Package className="h-4 w-4 text-slate-400" />
@@ -359,7 +359,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
           </div>
 
           <Link
-            href="/dashboard/settings"
+            href="/settings"
             className="mt-6 flex items-center justify-between text-xs font-semibold text-slate-300 hover:text-amber-400 transition-colors p-2 rounded-lg hover:bg-slate-800/60"
           >
             <span>Sesuaikan Jam & Ambang Batas</span>
@@ -495,7 +495,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
                       )}
                       {isProduct && (
                         <Link
-                          href="/dashboard/products"
+                          href="/products"
                           className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors"
                         >
                           <Package className="h-3.5 w-3.5" />

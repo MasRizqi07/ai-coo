@@ -26,7 +26,7 @@ export async function createProductAction(formData: FormData) {
       token,
     });
 
-    revalidatePath('/dashboard/products');
+    revalidatePath('/products');
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error: unknown) {
@@ -48,7 +48,7 @@ export async function restockProductAction(productId: string, quantity: number) 
       token,
     });
 
-    revalidatePath('/dashboard/products');
+    revalidatePath('/products');
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error: unknown) {
@@ -69,7 +69,7 @@ export async function deleteProductAction(id: string) {
       token,
     });
 
-    revalidatePath('/dashboard/products');
+    revalidatePath('/products');
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error: unknown) {
