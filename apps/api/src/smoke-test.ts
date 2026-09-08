@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 async function bootstrap() {
   console.log('⏳ Bootstrapping application context...');
   const app = await NestFactory.createApplicationContext(AppModule);
-  
+
   const prisma = app.get(PrismaService);
   const jwt = app.get(JwtService);
 
@@ -18,8 +18,8 @@ async function bootstrap() {
     create: {
       id: 'smoke-test-company',
       name: 'Smoke Test Corp',
-      businessType: 'WARKOP'
-    }
+      businessType: 'WARKOP',
+    },
   });
 
   // 2. Add dummy product
@@ -32,7 +32,7 @@ async function bootstrap() {
       name: 'Kopi Susu AI',
       price: 25000,
       stockQuantity: 5,
-    }
+    },
   });
 
   // 3. Add dummy sale
@@ -48,11 +48,11 @@ async function bootstrap() {
           {
             productId: 'smoke-test-product',
             quantity: 2,
-            priceAtSale: 25000
-          }
-        ]
-      }
-    }
+            priceAtSale: 25000,
+          },
+        ],
+      },
+    },
   });
 
   console.log('🔑 Generating JWT Token...');
@@ -64,12 +64,12 @@ async function bootstrap() {
     const response = await fetch('http://localhost:3001/ai-insights/latest', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const status = response.status;
-    let data;
+    let data: unknown;
     const text = await response.text();
     try {
       data = JSON.parse(text);
@@ -79,10 +79,9 @@ async function bootstrap() {
 
     console.log('\n================ ACTUAL RESPONSE ================');
     console.log(`STATUS CODE : ${status}`);
-    console.log(`BODY        :`);
+    console.log('BODY        :');
     console.log(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
     console.log('=================================================\n');
-
   } catch (error) {
     console.error('❌ Request Error:', error);
   }
@@ -91,4 +90,4 @@ async function bootstrap() {
   process.exit(0);
 }
 
-bootstrap();
+void bootstrap();

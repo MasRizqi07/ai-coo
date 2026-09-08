@@ -11,12 +11,15 @@ import { JwtAuthGuard } from './jwt-auth.guard';
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'fallback-secret-for-dev-only'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRATION', '15m') as any,
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const expiresIn = configService.get<string>('JWT_EXPIRATION', '15m');
+        return {
+          secret: configService.get<string>('JWT_SECRET', 'fallback-secret-for-dev-only'),
+          signOptions: {
+            expiresIn: expiresIn as unknown as number,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],

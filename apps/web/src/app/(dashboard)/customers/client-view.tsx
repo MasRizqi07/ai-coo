@@ -20,11 +20,12 @@ import {
 } from 'lucide-react';
 import { createCustomerAction, deleteCustomerAction } from '../../actions/customers';
 import { toast } from 'sonner';
+import { Customer } from '@ai-coo/shared-types';
 
 export default function CustomersClientView({
   initialCustomers: customers,
 }: {
-  initialCustomers: any[];
+  initialCustomers: Customer[];
 }) {
   const [showAddForm, setShowAddForm] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -113,7 +114,7 @@ export default function CustomersClientView({
           </p>
         </div>
         <Button
-          className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
+          className="gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
           onClick={() => setShowAddForm(!showAddForm)}
         >
           <Plus className="w-4 h-4 text-slate-950" />

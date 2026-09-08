@@ -4,6 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../../common/decorators/public.decorator';
 
+import { Request } from 'express';
+import { JwtUserPayload } from '../../common/types/authenticated-request.interface';
+
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
@@ -21,7 +24,7 @@ export class JwtAuthGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request & { user?: JwtUserPayload }>();
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -29,9 +32,12 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('Missing or invalid Authorization header');
+    }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync<JwtUserPayload>(token, {
         secret: this.configService.get<string>('JWT_SECRET', 'fallback-secret-for-dev-only'),
       });
       // Attach the payload to the request object

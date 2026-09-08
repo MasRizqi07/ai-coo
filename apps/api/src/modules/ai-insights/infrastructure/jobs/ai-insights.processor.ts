@@ -15,7 +15,7 @@ export class AiInsightsProcessor extends WorkerHost {
     super();
   }
 
-  async process(job: Job<any, any, string>): Promise<any> {
+  async process(job: Job<unknown, unknown, string>): Promise<void> {
     if (job.name === 'generate-all-insights') {
       this.logger.log('Starting daily AI Insights pipeline for all companies...');
       const companies = await this.prisma.company.findMany();
@@ -25,8 +25,9 @@ export class AiInsightsProcessor extends WorkerHost {
           this.logger.log(`Generating insight for company: ${company.name} (${company.id})`);
           await this.generateInsightsUseCase.execute(company.id);
         } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
           this.logger.error(
-            `Failed to generate insights for company ${company.id}: ${(error as any).message}`,
+            `Failed to generate insights for company ${company.id}: ${errorMessage}`,
           );
         }
       }

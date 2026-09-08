@@ -5,6 +5,7 @@ import { registerSchema, loginSchema } from '@ai-coo/validation';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { Public } from '../../common/decorators/public.decorator';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { AuthenticatedRequest } from '../../common/types/authenticated-request.interface';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -30,8 +31,7 @@ export class AuthController {
   @Get('me')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile and company info' })
-  async getMe(@Req() req: any) {
+  async getMe(@Req() req: AuthenticatedRequest) {
     return this.authService.getMe(req.user.sub);
   }
 }
-

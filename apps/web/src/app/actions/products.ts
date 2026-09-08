@@ -29,8 +29,11 @@ export async function createProductAction(formData: FormData) {
     revalidatePath('/dashboard/products');
     revalidatePath('/dashboard');
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Create product failed',
+    };
   }
 }
 
@@ -48,8 +51,11 @@ export async function restockProductAction(productId: string, quantity: number) 
     revalidatePath('/dashboard/products');
     revalidatePath('/dashboard');
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Restock failed',
+    };
   }
 }
 
@@ -66,7 +72,10 @@ export async function deleteProductAction(id: string) {
     revalidatePath('/dashboard/products');
     revalidatePath('/dashboard');
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Delete product failed',
+    };
   }
 }

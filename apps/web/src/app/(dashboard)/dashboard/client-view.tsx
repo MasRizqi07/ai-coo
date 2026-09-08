@@ -24,15 +24,45 @@ import {
   ShoppingBag,
   Clock,
 } from 'lucide-react';
+import { DashboardChartsResponse, DailyRevenuePoint } from '@ai-coo/shared-types';
+
+export interface DashboardStats {
+  totalRevenue: number;
+  activeCustomersCount?: number;
+  activeCustomers?: number;
+  lowStockAlertsCount?: number;
+  lowStockAlerts?: number;
+  todaySalesCount?: number;
+}
+
+export interface ActionItem {
+  target_type: 'CUSTOMER' | 'PRODUCT' | 'INVENTORY' | string;
+  target_name?: string;
+  action: string;
+  reason: string;
+}
+
+export interface InsightData {
+  summary: string;
+  risks: string[];
+  opportunities: string[];
+  action_items?: ActionItem[];
+  isStale?: boolean;
+}
+
+export type ChartPointWithCoords = DailyRevenuePoint & {
+  x: number;
+  y: number;
+};
 
 interface ClientViewProps {
-  stats: any;
-  charts?: any;
-  insight: any;
+  stats: DashboardStats;
+  charts?: DashboardChartsResponse | null;
+  insight?: InsightData | null;
 }
 
 export default function DashboardClientView({ stats, charts, insight }: ClientViewProps) {
-  const [hoveredPoint, setHoveredPoint] = React.useState<any | null>(null);
+  const [hoveredPoint, setHoveredPoint] = React.useState<ChartPointWithCoords | null>(null);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -65,7 +95,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
     },
     {
       name: 'Pelanggan Terdaftar',
-      value: stats.activeCustomers.toString(),
+      value: (stats.activeCustomersCount ?? stats.activeCustomers ?? 0).toString(),
       change: 'Aktif',
       subtext: 'di sistem CRM',
       icon: Users,
@@ -74,13 +104,13 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
     },
     {
       name: 'Peringatan Stok',
-      value: stats.lowStockAlerts.toString(),
-      change: stats.lowStockAlerts > 0 ? 'Perlu Restock' : 'Aman',
+      value: (stats.lowStockAlertsCount ?? stats.lowStockAlerts ?? 0).toString(),
+      change: (stats.lowStockAlertsCount ?? stats.lowStockAlerts ?? 0) > 0 ? 'Perlu Restock' : 'Aman',
       subtext: 'produk menipis',
       icon: AlertCircle,
-      alert: stats.lowStockAlerts > 0,
-      color: stats.lowStockAlerts > 0 ? 'text-red-400' : 'text-slate-400',
-      bgGlow: stats.lowStockAlerts > 0 ? 'from-red-500/10' : 'from-slate-500/10',
+      alert: (stats.lowStockAlertsCount ?? stats.lowStockAlerts ?? 0) > 0,
+      color: (stats.lowStockAlertsCount ?? stats.lowStockAlerts ?? 0) > 0 ? 'text-red-400' : 'text-slate-400',
+      bgGlow: (stats.lowStockAlertsCount ?? stats.lowStockAlerts ?? 0) > 0 ? 'from-red-500/10' : 'from-slate-500/10',
     },
   ];
 
@@ -96,18 +126,18 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
 
   // Chart Calculations for 7-day SVG graph
   const trendData = charts?.revenueTrend || [];
-  const maxRevenue = Math.max(...trendData.map((d: any) => d.revenue), 100000);
+  const maxRevenue = Math.max(...trendData.map((d: DailyRevenuePoint) => d.revenue), 100000);
   const chartHeight = 140;
   const chartWidth = 500;
 
   // Generate SVG points
-  const points = trendData.map((point: any, index: number) => {
+  const points: ChartPointWithCoords[] = trendData.map((point: DailyRevenuePoint, index: number) => {
     const x = (index / Math.max(trendData.length - 1, 1)) * (chartWidth - 40) + 20;
     const y = chartHeight - (point.revenue / maxRevenue) * (chartHeight - 40) - 20;
     return { x, y, ...point };
   });
 
-  const svgPath = points.reduce((acc: string, curr: any, i: number) => {
+  const svgPath = points.reduce((acc: string, curr: ChartPointWithCoords, i: number) => {
     return i === 0 ? `M ${curr.x} ${curr.y}` : `${acc} L ${curr.x} ${curr.y}`;
   }, '');
 
@@ -137,7 +167,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
         <div className="flex gap-2">
           <Link
             href="/dashboard/sales"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
+            className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
           >
             <ShoppingBag className="h-4 w-4 text-slate-950" />
             Buka Kasir POS
@@ -163,7 +193,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
           >
             <Card className="relative overflow-hidden group hover:border-amber-500/40 transition-all duration-300 bg-slate-900/50 backdrop-blur-xl border-slate-800/80">
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${stat.bgGlow} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                className={`absolute inset-0 bg-linear-to-br ${stat.bgGlow} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
               />
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -254,7 +284,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
               )}
 
               {/* Interactive Circles */}
-              {points.map((p: any, i: number) => (
+              {points.map((p: ChartPointWithCoords, i: number) => (
                 <g key={i} className="cursor-pointer">
                   <circle
                     cx={p.x}
@@ -339,7 +369,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
       </div>
 
       {/* AI Operations Brief — Premium Glassmorphic Card */}
-      <div className="relative rounded-3xl border border-amber-500/30 bg-gradient-to-br from-slate-900/80 via-slate-950/90 to-slate-950 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl overflow-hidden group">
+      <div className="relative rounded-3xl border border-amber-500/30 bg-linear-to-br from-slate-900/80 via-slate-950/90 to-slate-950 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl overflow-hidden group">
         <div className="absolute top-0 right-0 p-6">
           <div className="flex items-center gap-2">
             <span
@@ -354,7 +384,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
         </div>
 
         <div className="flex items-start gap-4">
-          <div className="p-3.5 bg-gradient-to-br from-amber-500/20 to-orange-500/10 rounded-2xl border border-amber-500/30 text-amber-400 shadow-lg shadow-amber-500/10">
+          <div className="p-3.5 bg-linear-to-br from-amber-500/20 to-orange-500/10 rounded-2xl border border-amber-500/30 text-amber-400 shadow-lg shadow-amber-500/10">
             <Brain className="h-7 w-7" />
           </div>
           <div className="space-y-1.5 max-w-4xl">
@@ -416,7 +446,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
               Rencana Tindakan Taktis Hari Ini
             </h4>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {activeInsight.action_items.map((item: any, index: number) => {
+              {activeInsight.action_items.map((item: ActionItem, index: number) => {
                 const isCustomer = item.target_type === 'CUSTOMER';
                 const isProduct = item.target_type === 'PRODUCT' || item.target_type === 'INVENTORY';
 
@@ -438,7 +468,7 @@ export default function DashboardClientView({ stats, charts, insight }: ClientVi
                         >
                           {item.target_type}
                         </span>
-                        <span className="text-xs font-semibold text-slate-300 truncate max-w-[140px]">
+                        <span className="text-xs font-semibold text-slate-300 truncate max-w-35">
                           {item.target_name}
                         </span>
                       </div>

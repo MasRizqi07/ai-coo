@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { fetchApi } from '../../lib/api';
 import { getToken } from './auth';
+import { Sale } from '@ai-coo/shared-types';
 
 export async function createSaleAction(
   formData: FormData,
@@ -27,7 +28,7 @@ export async function createSaleAction(
       items,
     };
 
-    const sale = await fetchApi<any>('/sales', {
+    const sale = await fetchApi<Sale>('/sales', {
       method: 'POST',
       body: JSON.stringify(dto),
       token,
@@ -38,7 +39,10 @@ export async function createSaleAction(
     revalidatePath('/dashboard/customers');
     revalidatePath('/dashboard');
     return { success: true, sale };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Create sale failed',
+    };
   }
 }

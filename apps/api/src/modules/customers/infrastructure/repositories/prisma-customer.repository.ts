@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { Customer as PrismaCustomer } from '@ai-coo/database';
 import { ICustomerRepository } from '../../domain/repositories/customer.repository.interface';
 import { Customer } from '../../domain/entities/customer.entity';
 import { IndonesianPhone } from '../../../../common/domain/value-objects/indonesian-phone.vo';
@@ -18,22 +19,22 @@ export class PrismaCustomerRepository implements ICustomerRepository {
     return companyId;
   }
 
-  private mapToDomain(record: any): Customer {
+  private mapToDomain = (record: PrismaCustomer): Customer => {
     return Customer.create(
       {
         companyId: record.companyId,
         name: record.name,
         phone: record.phone ? IndonesianPhone.create(record.phone) : undefined,
-        email: record.email,
+        email: record.email ?? undefined,
         totalSpent: Money.create(Number(record.totalSpent)),
-        lastPurchaseAt: record.lastPurchaseAt,
+        lastPurchaseAt: record.lastPurchaseAt ?? undefined,
         deletedAt: record.deletedAt,
         createdAt: record.createdAt,
         updatedAt: record.updatedAt,
       },
       record.id,
     );
-  }
+  };
 
   async save(customer: Customer): Promise<void> {
     // Assert companyId matches current tenant context
@@ -79,7 +80,7 @@ export class PrismaCustomerRepository implements ICustomerRepository {
       where: { companyId: this.companyId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
     });
-    return records.map(this.mapToDomain);
+    return records.map((r) => this.mapToDomain(r));
   }
 
   async delete(id: string): Promise<void> {

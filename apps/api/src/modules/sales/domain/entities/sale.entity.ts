@@ -75,4 +75,3 @@ export class Sale extends Entity<SaleProps> {
     return this.props.date || new Date();
   }
 }
-

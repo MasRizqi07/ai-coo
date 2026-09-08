@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantContext } from '../context/tenant-context';
+import { AuthenticatedRequest } from '../types/authenticated-request.interface';
 
 /**
  * Interceptor that sets the PostgreSQL Row-Level Security tenant context
@@ -19,7 +20,7 @@ export class TenantInterceptor implements NestInterceptor {
   constructor(private readonly prisma: PrismaService) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const user = request.user;
 
     if (!user || !user.companyId) {

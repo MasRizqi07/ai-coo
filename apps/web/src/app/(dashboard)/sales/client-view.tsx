@@ -16,16 +16,33 @@ import {
   CreditCard,
   Banknote,
   QrCode,
-  ArrowRight,
   Trash2,
 } from 'lucide-react';
 import { createSaleAction } from '../../actions/sales';
 import { toast } from 'sonner';
+import { Customer, Product, Sale } from '@ai-coo/shared-types';
+
+interface CompletedSaleItem {
+  name: string;
+  quantity: number;
+  price: number;
+  subtotal: number;
+}
+
+interface CompletedSale extends Partial<Sale> {
+  customerName: string;
+  customerPhone?: string;
+  total: number;
+  paid: number;
+  change: number;
+  paymentMethod: 'CASH' | 'QRIS' | 'TRANSFER';
+  itemsDetailed: CompletedSaleItem[];
+}
 
 interface SalesClientViewProps {
-  initialSales: any[];
-  customers: any[];
-  products: any[];
+  initialSales: Sale[];
+  customers: Customer[];
+  products: Product[];
 }
 
 export default function SalesClientView({
@@ -45,7 +62,7 @@ export default function SalesClientView({
   const [notes, setNotes] = React.useState<string>('');
 
   // Completed Receipt Modal State
-  const [completedSale, setCompletedSale] = React.useState<any | null>(null);
+  const [completedSale, setCompletedSale] = React.useState<CompletedSale | null>(null);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -184,7 +201,7 @@ export default function SalesClientView({
           </p>
         </div>
         <Button
-          className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
+          className="gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
           onClick={() => setShowCheckout(!showCheckout)}
         >
           <Plus className="w-4 h-4 text-slate-950" />
@@ -233,7 +250,7 @@ export default function SalesClientView({
                         Tidak ada produk aktif atau semua stok habis. Tambahkan produk di menu Inventaris.
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[420px] overflow-y-auto pr-1">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-105 overflow-y-auto pr-1">
                         {products.map((p) => {
                           const inCart = cartItems.find((ci) => ci.productId === p.id);
                           return (
@@ -368,15 +385,17 @@ export default function SalesClientView({
                           Metode Pembayaran
                         </label>
                         <div className="grid grid-cols-3 gap-2">
-                          {[
-                            { id: 'CASH', label: 'Tunai', icon: Banknote },
-                            { id: 'QRIS', label: 'QRIS', icon: QrCode },
-                            { id: 'TRANSFER', label: 'Transfer', icon: CreditCard },
-                          ].map((pm) => (
+                          {(
+                            [
+                              { id: 'CASH', label: 'Tunai', icon: Banknote },
+                              { id: 'QRIS', label: 'QRIS', icon: QrCode },
+                              { id: 'TRANSFER', label: 'Transfer', icon: CreditCard },
+                            ] as const
+                          ).map((pm) => (
                             <button
                               key={pm.id}
                               type="button"
-                              onClick={() => setPaymentMethod(pm.id as any)}
+                              onClick={() => setPaymentMethod(pm.id)}
                               className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-colors ${
                                 paymentMethod === pm.id
                                   ? 'bg-amber-500/20 border-amber-500 text-amber-400'
@@ -449,7 +468,7 @@ export default function SalesClientView({
                       <Button
                         type="submit"
                         disabled={loading || cartItems.length === 0}
-                        className="w-full h-11 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
+                        className="w-full h-11 bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
                       >
                         {loading ? 'Memproses...' : 'Selesaikan Transaksi (Cetak Struk)'}
                       </Button>
@@ -577,7 +596,7 @@ export default function SalesClientView({
                 </div>
 
                 <div className="pt-2 space-y-1.5">
-                  {completedSale.itemsDetailed?.map((it: any, idx: number) => (
+                  {completedSale.itemsDetailed?.map((it: CompletedSaleItem, idx: number) => (
                     <div key={idx} className="flex justify-between text-slate-300">
                       <span>
                         {it.name} <span className="text-slate-500">x{it.quantity}</span>

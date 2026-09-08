@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { BusinessType } from '@ai-coo/shared-types';
+import { Role } from '@ai-coo/database';
 
 jest.mock('bcrypt');
 
@@ -51,12 +51,15 @@ describe('AuthService', () => {
     it('should return a token if credentials are valid', async () => {
       const user = {
         id: '1',
+        name: 'Test User',
         email: 'test@test.com',
         passwordHash: 'hash',
-        role: 'OWNER',
+        role: Role.OWNER,
         companyId: 'c1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
-      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(user as any);
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       jest.spyOn(jwtService, 'signAsync').mockResolvedValue('token');
 

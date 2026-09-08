@@ -55,7 +55,7 @@ export function Sidebar({ isOpen = false, onClose, companyName, businessType }: 
         {/* Brand Header */}
         <div className="flex h-18 shrink-0 items-center justify-between border-b border-slate-800/60 px-6">
           <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-slate-950 font-black shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 to-orange-600 text-slate-950 font-black shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
               <Sparkles className="h-5 w-5 text-slate-950" />
             </div>
             <div>
@@ -108,7 +108,7 @@ export function Sidebar({ isOpen = false, onClose, companyName, businessType }: 
                 className={cn(
                   'group relative flex items-center gap-x-3.5 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-gradient-to-r from-amber-500/15 to-transparent text-amber-400 font-semibold border-l-2 border-amber-500 shadow-sm shadow-amber-500/5'
+                    ? 'bg-linear-to-r from-amber-500/15 to-transparent text-amber-400 font-semibold border-l-2 border-amber-500 shadow-sm shadow-amber-500/5'
                     : 'text-slate-400 hover:bg-slate-900/60 hover:text-slate-200',
                 )}
               >

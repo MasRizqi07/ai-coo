@@ -1,7 +1,10 @@
 import { fetchApi } from '../../../lib/api';
 import { getToken } from '../../actions/auth';
 import { redirect } from 'next/navigation';
+import { UserProfile } from '@ai-coo/shared-types';
 import SettingsClientView from './client-view';
+
+type CompanyProfile = UserProfile['company'];
 
 export default async function SettingsPage() {
   const token = await getToken();
@@ -12,8 +15,8 @@ export default async function SettingsPage() {
 
   try {
     const [company, me] = await Promise.all([
-      fetchApi<any>('/companies/profile', { token }),
-      fetchApi<any>('/auth/me', { token }),
+      fetchApi<CompanyProfile>('/companies/profile', { token }),
+      fetchApi<UserProfile>('/auth/me', { token }),
     ]);
 
     return <SettingsClientView initialCompany={company} currentUser={me} />;

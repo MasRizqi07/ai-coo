@@ -21,7 +21,7 @@ export function DashboardShell({ children, userProfile }: DashboardShellProps) {
   const initials = userName
     .split(' ')
     .filter(Boolean)
-    .map((w) => w[0])
+    .map((w: string) => w[0])
     .slice(0, 2)
     .join('')
     .toUpperCase() || 'UM';
@@ -61,7 +61,7 @@ export function DashboardShell({ children, userProfile }: DashboardShellProps) {
             </button>
 
             <div className="flex items-center gap-2.5">
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight truncate max-w-[200px] sm:max-w-md">
+              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight truncate max-w-50 sm:max-w-md">
                 {companyName}
               </h1>
               <span className="hidden sm:inline-flex rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-400 border border-amber-500/20">
@@ -85,7 +85,7 @@ export function DashboardShell({ children, userProfile }: DashboardShellProps) {
               </div>
               <div
                 title={userName}
-                className="h-9 w-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 border border-amber-400/40 flex items-center justify-center text-xs font-black text-slate-950 shadow-md shadow-amber-500/20 cursor-pointer"
+                className="h-9 w-9 rounded-xl bg-linear-to-tr from-amber-500 to-orange-500 border border-amber-400/40 flex items-center justify-center text-xs font-black text-slate-950 shadow-md shadow-amber-500/20 cursor-pointer"
               >
                 {initials}
               </div>
@@ -94,7 +94,7 @@ export function DashboardShell({ children, userProfile }: DashboardShellProps) {
         </header>
 
         {/* Main Content Area with Mesh Gradient Background */}
-        <main className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900/90 via-slate-950 to-slate-950 p-4 sm:p-8">
+        <main className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-slate-900/90 via-slate-950 to-slate-950 p-4 sm:p-8">
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>

@@ -1,6 +1,11 @@
 import { GenerateInsightsUseCase } from './generate-insights.use-case';
 import { AnalyticsService } from '../services/analytics.service';
 import { ConfigService } from '@nestjs/config';
+import { IProductRepository } from '../../../products/domain/repositories/product.repository.interface';
+import { ICustomerRepository } from '../../../customers/domain/repositories/customer.repository.interface';
+import { ISaleRepository } from '../../../sales/domain/repositories/sale.repository.interface';
+import { IInsightRepository } from '../../domain/repositories/insight.repository.interface';
+import { IAIProvider } from '../../domain/services/ai-provider.interface';
 
 // Mock Redis to prevent real network connections
 jest.mock('ioredis', () => {
@@ -14,23 +19,31 @@ jest.mock('ioredis', () => {
 
 describe('GenerateInsightsUseCase', () => {
   let useCase: GenerateInsightsUseCase;
-  let mockProductRepo: any;
-  let mockCustomerRepo: any;
-  let mockSaleRepo: any;
-  let mockInsightRepo: any;
-  let mockAiProvider: any;
+  let mockProductRepo: jest.Mocked<IProductRepository>;
+  let mockCustomerRepo: jest.Mocked<ICustomerRepository>;
+  let mockSaleRepo: jest.Mocked<ISaleRepository>;
+  let mockInsightRepo: jest.Mocked<IInsightRepository>;
+  let mockAiProvider: jest.Mocked<IAIProvider>;
   let analyticsService: AnalyticsService;
-  let mockConfigService: any;
+  let mockConfigService: Partial<ConfigService>;
 
   beforeEach(() => {
     mockProductRepo = {
       findAll: jest.fn().mockResolvedValue([]),
+      findById: jest.fn(),
+      save: jest.fn(),
+      delete: jest.fn(),
     };
     mockCustomerRepo = {
       findAll: jest.fn().mockResolvedValue([]),
+      findById: jest.fn(),
+      save: jest.fn(),
+      delete: jest.fn(),
     };
     mockSaleRepo = {
       findAll: jest.fn().mockResolvedValue([]),
+      findById: jest.fn(),
+      save: jest.fn(),
     };
     mockInsightRepo = {
       save: jest.fn().mockResolvedValue(undefined),
@@ -45,7 +58,7 @@ describe('GenerateInsightsUseCase', () => {
         if (key === 'REDIS_HOST') return 'localhost';
         if (key === 'REDIS_PORT') return 6379;
         return undefined;
-      }),
+      }) as never,
     };
 
     useCase = new GenerateInsightsUseCase(
@@ -55,7 +68,7 @@ describe('GenerateInsightsUseCase', () => {
       mockInsightRepo,
       mockAiProvider,
       analyticsService,
-      mockConfigService,
+      mockConfigService as ConfigService,
     );
   });
 

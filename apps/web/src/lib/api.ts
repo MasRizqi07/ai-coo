@@ -3,9 +3,16 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 export class ApiError extends Error {
   constructor(
     public status: number,
-    public data: any,
+    public data: unknown,
   ) {
-    super(data.message || 'An error occurred during the API request.');
+    const message =
+      typeof data === 'object' &&
+      data !== null &&
+      'message' in data &&
+      typeof (data as { message: unknown }).message === 'string'
+        ? (data as { message: string }).message
+        : 'An error occurred during the API request.';
+    super(message);
     this.name = 'ApiError';
   }
 }
@@ -30,12 +37,15 @@ export async function fetchApi<T>(endpoint: string, options: FetchOptions = {}):
     ...restOptions,
   });
 
-  const data = await response.json();
+  const data: unknown = await response.json();
 
   if (!response.ok) {
     throw new ApiError(response.status, data);
   }
 
   // NestJS Standard Envelope unwrapping
-  return data.data !== undefined ? data.data : data;
+  if (typeof data === 'object' && data !== null && 'data' in data) {
+    return (data as { data: T }).data;
+  }
+  return data as T;
 }

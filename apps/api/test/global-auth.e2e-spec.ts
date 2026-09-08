@@ -4,6 +4,7 @@ import { APP_GUARD, Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import request from 'supertest';
+import { App } from 'supertest/types';
 import { JwtAuthGuard } from '../src/modules/auth/jwt-auth.guard';
 import { Public } from '../src/common/decorators/public.decorator';
 
@@ -41,12 +42,17 @@ class MockHealthController {
 }
 
 describe('Global Auth Guard (isolated e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication<App>;
   let jwtService: JwtService;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      controllers: [MockSalesController, MockProductsController, MockDashboardController, MockHealthController],
+      controllers: [
+        MockSalesController,
+        MockProductsController,
+        MockDashboardController,
+        MockHealthController,
+      ],
       providers: [
         {
           provide: APP_GUARD,
@@ -74,19 +80,18 @@ describe('Global Auth Guard (isolated e2e)', () => {
   });
 
   it('/sales (GET) should return 401 without token', () => {
-    return request(app.getHttpServer())
-      .get('/sales')
-      .expect(401);
+    return request(app.getHttpServer()).get('/sales').expect(401);
   });
 
   it('/health (GET) should return 200 without token because it is public', () => {
-    return request(app.getHttpServer())
-      .get('/health')
-      .expect(200);
+    return request(app.getHttpServer()).get('/health').expect(200);
   });
 
   it('/sales (GET) should return 200 WITH valid token', () => {
-    (jwtService.verifyAsync as jest.Mock).mockResolvedValueOnce({ companyId: 'test-123', userId: 'user-1' });
+    (jwtService.verifyAsync as jest.Mock).mockResolvedValueOnce({
+      companyId: 'test-123',
+      userId: 'user-1',
+    });
     return request(app.getHttpServer())
       .get('/sales')
       .set('Authorization', 'Bearer valid-token')
@@ -94,7 +99,10 @@ describe('Global Auth Guard (isolated e2e)', () => {
   });
 
   it('/products (GET) should return 200 WITH valid token', () => {
-    (jwtService.verifyAsync as jest.Mock).mockResolvedValueOnce({ companyId: 'test-123', userId: 'user-1' });
+    (jwtService.verifyAsync as jest.Mock).mockResolvedValueOnce({
+      companyId: 'test-123',
+      userId: 'user-1',
+    });
     return request(app.getHttpServer())
       .get('/products')
       .set('Authorization', 'Bearer valid-token')
@@ -102,7 +110,10 @@ describe('Global Auth Guard (isolated e2e)', () => {
   });
 
   it('/dashboard/stats (GET) should return 200 WITH valid token', () => {
-    (jwtService.verifyAsync as jest.Mock).mockResolvedValueOnce({ companyId: 'test-123', userId: 'user-1' });
+    (jwtService.verifyAsync as jest.Mock).mockResolvedValueOnce({
+      companyId: 'test-123',
+      userId: 'user-1',
+    });
     return request(app.getHttpServer())
       .get('/dashboard/stats')
       .set('Authorization', 'Bearer valid-token')

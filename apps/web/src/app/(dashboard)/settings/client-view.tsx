@@ -16,13 +16,16 @@ import {
 } from 'lucide-react';
 import { updateCompanyAction } from '../../actions/companies';
 import { toast } from 'sonner';
+import { UserProfile } from '@ai-coo/shared-types';
+
+type CompanyProfile = UserProfile['company'];
 
 export default function SettingsClientView({
   initialCompany,
   currentUser,
 }: {
-  initialCompany: any;
-  currentUser: any;
+  initialCompany: CompanyProfile | null;
+  currentUser: UserProfile | null;
 }) {
   const [loading, setLoading] = React.useState(false);
   const [companyName, setCompanyName] = React.useState(initialCompany?.name || '');
@@ -134,7 +137,7 @@ export default function SettingsClientView({
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
+                  className="gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
                 >
                   <Save className="h-4 w-4 text-slate-950" />
                   {loading ? 'Menyimpan...' : 'Simpan Perubahan'}

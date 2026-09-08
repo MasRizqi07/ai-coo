@@ -25,8 +25,11 @@ export async function createCustomerAction(formData: FormData) {
     revalidatePath('/dashboard/customers');
     revalidatePath('/dashboard'); // Update stats
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Create customer failed',
+    };
   }
 }
 
@@ -43,7 +46,10 @@ export async function deleteCustomerAction(id: string) {
     revalidatePath('/dashboard/customers');
     revalidatePath('/dashboard');
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Delete customer failed',
+    };
   }
 }

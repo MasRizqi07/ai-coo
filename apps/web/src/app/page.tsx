@@ -2,16 +2,11 @@ import Link from 'next/link';
 import {
   Sparkles,
   ArrowRight,
-  TrendingUp,
   Brain,
   ShoppingBag,
-  ShieldCheck,
   MessageCircle,
   PackageCheck,
   CheckCircle2,
-  Users,
-  Store,
-  Zap,
 } from 'lucide-react';
 import { getToken } from './actions/auth';
 
@@ -22,7 +17,7 @@ export default async function HomePage() {
     <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-amber-500/30 selection:text-amber-200 overflow-x-hidden">
       {/* Background Glows */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-b from-amber-500/10 via-orange-500/5 to-transparent blur-3xl opacity-70" />
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-175 h-125 bg-linear-to-b from-amber-500/10 via-orange-500/5 to-transparent blur-3xl opacity-70" />
         <div className="absolute top-1/3 -left-40 w-96 h-96 bg-emerald-500/5 blur-3xl rounded-full" />
         <div className="absolute top-2/3 -right-40 w-96 h-96 bg-blue-500/5 blur-3xl rounded-full" />
       </div>
@@ -31,7 +26,7 @@ export default async function HomePage() {
       <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-2xl">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-slate-950 font-black shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 to-orange-600 text-slate-950 font-black shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
               <Sparkles className="h-5 w-5 text-slate-950" />
             </div>
             <div>
@@ -63,7 +58,7 @@ export default async function HomePage() {
             {token ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
+                className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
               >
                 Buka Dashboard <ArrowRight className="h-4 w-4" />
               </Link>
@@ -77,7 +72,7 @@ export default async function HomePage() {
                 </Link>
                 <Link
                   href="/register"
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
                 >
                   Daftar Toko <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -96,7 +91,7 @@ export default async function HomePage() {
 
         <h1 className="mt-8 text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.1]">
           Kelola Toko Lebih Rapi, <br />
-          <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent">
             Lipatgandakan Omset dengan AI COO.
           </span>
         </h1>
@@ -108,7 +103,7 @@ export default async function HomePage() {
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/register"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 px-8 py-4 text-base font-extrabold text-slate-950 hover:brightness-110 shadow-xl shadow-amber-500/25 transition-all active:scale-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-2xl bg-linear-to-r from-amber-500 via-orange-500 to-amber-500 px-8 py-4 text-base font-extrabold text-slate-950 hover:brightness-110 shadow-xl shadow-amber-500/25 transition-all active:scale-95"
           >
             Mulai Usaha Anda Sekarang
             <ArrowRight className="h-5 w-5" />
@@ -137,7 +132,7 @@ export default async function HomePage() {
         </div>
 
         {/* Floating Mockup Showcase */}
-        <div id="showcase" className="mt-16 mx-auto max-w-5xl rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-4 sm:p-8 backdrop-blur-2xl shadow-2xl shadow-amber-500/5 text-left relative overflow-hidden">
+        <div id="showcase" className="mt-16 mx-auto max-w-5xl rounded-3xl border border-slate-800 bg-linear-to-b from-slate-900/90 to-slate-950/90 p-4 sm:p-8 backdrop-blur-2xl shadow-2xl shadow-amber-500/5 text-left relative overflow-hidden">
           <div className="flex items-center justify-between pb-6 border-b border-slate-800">
             <div className="flex items-center gap-3">
               <div className="flex gap-1.5">
@@ -257,7 +252,7 @@ export default async function HomePage() {
       {/* Impact & Numbers Section */}
       <section id="dampak" className="relative z-10 py-20 border-t border-slate-800/80">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-r from-slate-900/90 via-slate-950 to-slate-900/90 p-8 sm:p-12 backdrop-blur-2xl">
+          <div className="rounded-3xl border border-amber-500/30 bg-linear-to-r from-slate-900/90 via-slate-950 to-slate-900/90 p-8 sm:p-12 backdrop-blur-2xl">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
               <div className="pt-4 lg:pt-0">
                 <p className="text-4xl sm:text-5xl font-black text-amber-400">+35%</p>
@@ -348,7 +343,7 @@ export default async function HomePage() {
       {/* Bottom CTA Banner */}
       <section className="relative z-10 py-20 border-t border-slate-800">
         <div className="mx-auto max-w-5xl px-6 text-center lg:px-8">
-          <div className="rounded-3xl bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/30 p-8 sm:p-14 shadow-2xl">
+          <div className="rounded-3xl bg-linear-to-br from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/30 p-8 sm:p-14 shadow-2xl">
             <h2 className="text-3xl sm:text-4xl font-black text-white">
               Siap Membawa Usaha Anda ke Level Berikutnya?
             </h2>

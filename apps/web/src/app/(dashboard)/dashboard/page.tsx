@@ -1,7 +1,8 @@
 import { fetchApi } from '../../../lib/api';
 import { getToken } from '../../actions/auth';
 import { redirect } from 'next/navigation';
-import DashboardClientView from './client-view';
+import { DashboardChartsResponse } from '@ai-coo/shared-types';
+import DashboardClientView, { DashboardStats, InsightData } from './client-view';
 
 export default async function DashboardPage() {
   const token = await getToken();
@@ -12,12 +13,12 @@ export default async function DashboardPage() {
 
   try {
     const [stats, charts, insight] = await Promise.all([
-      fetchApi<any>('/dashboard/stats', { token }),
-      fetchApi<any>('/dashboard/charts', { token }).catch((err) => {
+      fetchApi<DashboardStats>('/dashboard/stats', { token }),
+      fetchApi<DashboardChartsResponse | null>('/dashboard/charts', { token }).catch((err) => {
         console.error('Failed to fetch charts data', err);
         return null;
       }),
-      fetchApi<any>('/ai-insights/latest', { token }).catch((err) => {
+      fetchApi<InsightData | null>('/ai-insights/latest', { token }).catch((err) => {
         console.error('Failed to fetch AI insights', err);
         return null;
       }),

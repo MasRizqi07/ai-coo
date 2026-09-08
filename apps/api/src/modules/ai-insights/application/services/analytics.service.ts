@@ -1,9 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { Money } from '../../../../common/domain/value-objects/money.vo';
+
+export interface AnalyticsCustomer {
+  id?: string;
+  name: string;
+  totalSpent: number | string | Money;
+  lastPurchaseAt?: Date | string | null;
+}
+
+export interface AnalyticsProduct {
+  id: string;
+  name: string;
+  price?: number | Money;
+  stockQuantity: number;
+  minStockLevel?: number | null;
+}
+
+export interface AnalyticsSaleItem {
+  productId?: string | null;
+  quantity: number;
+  priceAtSale?: number;
+}
+
+export interface AnalyticsSale {
+  id?: string;
+  date: Date | string;
+  amount: number | string | Money;
+  items?: AnalyticsSaleItem[];
+}
 
 export interface AnalyticsInput {
-  sales: any[];
-  products: any[];
-  customers: any[];
+  sales: AnalyticsSale[];
+  products: AnalyticsProduct[];
+  customers: AnalyticsCustomer[];
 }
 
 export interface AggregatedMetrics {
@@ -30,6 +59,22 @@ export interface AggregatedMetrics {
   } | null;
 }
 
+function parseNumber(value: number | string | Money | null | undefined): number {
+  if (value == null) return 0;
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') return parseFloat(value) || 0;
+  if (typeof value === 'object' && 'amount' in value && typeof value.amount === 'number') {
+    return value.amount;
+  }
+  return 0;
+}
+
+function parseDate(value: Date | string | null | undefined): Date {
+  if (value instanceof Date) return value;
+  if (typeof value === 'string') return new Date(value);
+  return new Date(0);
+}
+
 @Injectable()
 export class AnalyticsService {
   aggregate(data: AnalyticsInput): AggregatedMetrics {
@@ -39,14 +84,14 @@ export class AnalyticsService {
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     // 1. Revenue Trend (last 7 days vs 7 days before that)
-    const curPeriodSales = data.sales.filter((s) => new Date(s.date) >= sevenDaysAgo);
+    const curPeriodSales = data.sales.filter((s) => parseDate(s.date) >= sevenDaysAgo);
     const prevPeriodSales = data.sales.filter((s) => {
-      const d = new Date(s.date);
+      const d = parseDate(s.date);
       return d < sevenDaysAgo && d >= new Date(sevenDaysAgo.getTime() - 7 * 24 * 60 * 60 * 1000);
     });
 
-    const curRevenue = curPeriodSales.reduce((sum, s) => sum + Number(s.amount), 0);
-    const prevRevenue = prevPeriodSales.reduce((sum, s) => sum + Number(s.amount), 0);
+    const curRevenue = curPeriodSales.reduce((sum, s) => sum + parseNumber(s.amount), 0);
+    const prevRevenue = prevPeriodSales.reduce((sum, s) => sum + parseNumber(s.amount), 0);
     let pctChange = 0;
     if (prevRevenue > 0) {
       pctChange = ((curRevenue - prevRevenue) / prevRevenue) * 100;
@@ -58,12 +103,13 @@ export class AnalyticsService {
     let topCustomer: { name: string; totalSpent: number } | null = null;
     if (data.customers.length > 0) {
       const sortedCustomers = [...data.customers].sort(
-        (a, b) => Number(b.totalSpent) - Number(a.totalSpent),
+        (a, b) => parseNumber(b.totalSpent) - parseNumber(a.totalSpent),
       );
-      if (sortedCustomers[0] && Number(sortedCustomers[0].totalSpent) > 0) {
+      const top = sortedCustomers[0];
+      if (top && parseNumber(top.totalSpent) > 0) {
         topCustomer = {
-          name: sortedCustomers[0].name,
-          totalSpent: Number(sortedCustomers[0].totalSpent),
+          name: top.name,
+          totalSpent: parseNumber(top.totalSpent),
         };
       }
     }
@@ -72,11 +118,11 @@ export class AnalyticsService {
     const atRiskCustomers = data.customers
       .filter((c) => {
         if (!c.lastPurchaseAt) return false;
-        const lastP = new Date(c.lastPurchaseAt);
+        const lastP = parseDate(c.lastPurchaseAt);
         return lastP < fourteenDaysAgo;
       })
       .map((c) => {
-        const lastP = new Date(c.lastPurchaseAt);
+        const lastP = parseDate(c.lastPurchaseAt);
         const diffTime = Math.abs(now.getTime() - lastP.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return {
@@ -95,17 +141,19 @@ export class AnalyticsService {
 
     // 5. Fastest Moving Product (highest quantity sold in last 30 days)
     const productSalesCount: Record<string, { name: string; quantitySold: number }> = {};
-    const recent30DaysSales = data.sales.filter((s) => new Date(s.date) >= thirtyDaysAgo);
+    const recent30DaysSales = data.sales.filter((s) => parseDate(s.date) >= thirtyDaysAgo);
 
     for (const sale of recent30DaysSales) {
       for (const item of sale.items || []) {
         if (!item.productId) continue;
         const product = data.products.find((p) => p.id === item.productId);
         const name = product ? product.name : 'Unknown Product';
-        if (!productSalesCount[item.productId]) {
-          productSalesCount[item.productId] = { name, quantitySold: 0 };
+        const existing = productSalesCount[item.productId];
+        if (!existing) {
+          productSalesCount[item.productId] = { name, quantitySold: item.quantity };
+        } else {
+          existing.quantitySold += item.quantity;
         }
-        productSalesCount[item.productId].quantitySold += item.quantity;
       }
     }
 

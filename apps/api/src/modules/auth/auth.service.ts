@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { Prisma } from '@ai-coo/database';
 import { RegisterDto, LoginDto } from '@ai-coo/shared-types';
 
 @Injectable()
@@ -25,15 +26,15 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(dto.password, saltRounds);
 
     // Create Company and Owner in a transaction
-    const result = await this.prisma.$transaction(async (prisma: any) => {
-      const company = await prisma.company.create({
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      const company = await tx.company.create({
         data: {
           name: dto.companyName,
           businessType: dto.businessType,
         },
       });
 
-      const user = await prisma.user.create({
+      const user = await tx.user.create({
         data: {
           companyId: company.id,
           name: dto.userName,
@@ -117,4 +118,3 @@ export class AuthService {
     };
   }
 }
-

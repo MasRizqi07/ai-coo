@@ -12,7 +12,7 @@ export class OpenAiProvider implements IAIProvider {
     this.openai = new OpenAI({ apiKey });
   }
 
-  async generateInsight(prompt: string, schema?: any): Promise<string> {
+  async generateInsight(prompt: string, schema?: Record<string, unknown>): Promise<string> {
     const response = await this.openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [

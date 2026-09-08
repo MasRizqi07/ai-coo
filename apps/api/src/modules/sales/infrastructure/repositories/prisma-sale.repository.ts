@@ -1,9 +1,18 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { Prisma } from '@ai-coo/database';
 import { ISaleRepository } from '../../domain/repositories/sale.repository.interface';
 import { Sale } from '../../domain/entities/sale.entity';
 import { SaleItem } from '../../domain/entities/sale-item.entity';
+import { PaymentMethod } from '@ai-coo/shared-types';
 import { TenantContext } from '../../../../common/context/tenant-context';
+
+type PrismaSaleWithRelations = Prisma.SaleGetPayload<{
+  include: {
+    items: true;
+    customer: true;
+  };
+}>;
 
 @Injectable()
 export class PrismaSaleRepository implements ISaleRepository {
@@ -17,8 +26,8 @@ export class PrismaSaleRepository implements ISaleRepository {
     return companyId;
   }
 
-  private mapToDomain(record: any): Sale {
-    const items = (record.items || []).map((item: any) =>
+  private mapToDomain = (record: PrismaSaleWithRelations): Sale => {
+    const items = (record.items || []).map((item) =>
       SaleItem.create(
         {
           productId: item.productId,
@@ -34,7 +43,7 @@ export class PrismaSaleRepository implements ISaleRepository {
         companyId: record.companyId,
         customerId: record.customerId,
         amount: Number(record.amount),
-        paymentMethod: record.paymentMethod,
+        paymentMethod: record.paymentMethod as unknown as PaymentMethod,
         paidAmount: record.paidAmount ? Number(record.paidAmount) : null,
         changeAmount: record.changeAmount ? Number(record.changeAmount) : null,
         notes: record.notes,
@@ -45,14 +54,14 @@ export class PrismaSaleRepository implements ISaleRepository {
       },
       record.id,
     );
-  }
+  };
 
   async save(sale: Sale): Promise<void> {
     if (sale.companyId !== this.companyId) {
       throw new Error('Tenant mismatch in sale save');
     }
 
-    await this.prisma.$transaction(async (tx: any) => {
+    await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       let totalAmount = 0;
       const saleItemsToCreate = [];
 
@@ -139,7 +148,7 @@ export class PrismaSaleRepository implements ISaleRepository {
         customer: true,
       },
     });
-    return records.map((r: any) => this.mapToDomain(r));
+    return records.map((r) => this.mapToDomain(r));
   }
 
   async findById(id: string): Promise<Sale | null> {

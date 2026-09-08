@@ -85,7 +85,7 @@ export class GenerateInsightsUseCase {
       const cached = await this.redis.get(cacheKey);
       if (cached) {
         try {
-          const parsed = JSON.parse(cached);
+          const parsed = JSON.parse(cached) as InsightPayload;
           return { ...parsed, isStale: true };
         } catch {
           // Ignore parse errors on cached payload
@@ -95,7 +95,7 @@ export class GenerateInsightsUseCase {
       // 3. Fallback to database
       const dbInsight = await this.insightRepository.findLatest(companyId);
       if (dbInsight) {
-        return { ...(dbInsight as any), isStale: true };
+        return { ...dbInsight, isStale: true };
       }
 
       // 4. Fallback to standard friendly default
@@ -195,7 +195,7 @@ export class GenerateInsightsUseCase {
       while (attempt < 2) {
         try {
           aiResponseText = await this.aiProvider.generateInsight(prompt, jsonSchema);
-          const parsed = JSON.parse(aiResponseText);
+          const parsed: unknown = JSON.parse(aiResponseText);
           const validated = insightPayloadSchema.parse(parsed);
 
           // Write insight to database
@@ -204,9 +204,8 @@ export class GenerateInsightsUseCase {
           return validated;
         } catch (err) {
           attempt++;
-          this.logger.warn(
-            `AI generation attempt ${attempt} failed: ${(err as any).message}. Retrying...`,
-          );
+          const errMsg = err instanceof Error ? err.message : String(err);
+          this.logger.warn(`AI generation attempt ${attempt} failed: ${errMsg}. Retrying...`);
           if (attempt >= 2) {
             throw err; // bubble up to try cache/db fallback
           }

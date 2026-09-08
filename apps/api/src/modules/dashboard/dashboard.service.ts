@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { DailyRevenuePoint } from '@ai-coo/shared-types';
 
 @Injectable()
 export class DashboardService {
@@ -17,24 +18,20 @@ export class DashboardService {
       where: { companyId, deletedAt: null },
     });
 
-    // 3. Get products in stock
-    const productsInStockResult = await this.prisma.product.aggregate({
+    // 3. Get low stock products count (below threshold or 15)
+    // We fetch products and evaluate against minStockLevel or default 15
+    const products = await this.prisma.product.findMany({
       where: { companyId, deletedAt: null },
-      _sum: { stockQuantity: true },
+      select: { stockQuantity: true, minStockLevel: true },
     });
+    const lowStockAlertsCount = products.filter(
+      (p) => p.stockQuantity < (p.minStockLevel || 15),
+    ).length;
 
-    // 4. Low stock alerts (< 15 units or <= minStockLevel)
-    const lowStockCount = await this.prisma.product.count({
-      where: {
-        companyId,
-        deletedAt: null,
-        stockQuantity: { lt: 15 },
-      },
-    });
-
-    // 5. Total transactions today
+    // 4. Get today sales count
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
+
     const todaySalesCount = await this.prisma.sale.count({
       where: {
         companyId,
@@ -44,9 +41,8 @@ export class DashboardService {
 
     return {
       totalRevenue: Number(totalRevenueResult._sum.amount || 0),
-      activeCustomers: activeCustomersCount,
-      productsInStock: productsInStockResult._sum.stockQuantity || 0,
-      lowStockAlerts: lowStockCount,
+      activeCustomersCount,
+      lowStockAlertsCount,
       todaySalesCount,
     };
   }
@@ -54,7 +50,7 @@ export class DashboardService {
   async getCharts(companyId: string): Promise<any> {
     const now = new Date();
     const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-    const dailyPoints: Array<{ date: string; displayDate: string; revenue: number; salesCount: number }> = [];
+    const dailyPoints: DailyRevenuePoint[] = [];
 
     // Generate date points for the last 7 days
     for (let i = 6; i >= 0; i--) {
@@ -123,4 +119,3 @@ export class DashboardService {
     };
   }
 }
-

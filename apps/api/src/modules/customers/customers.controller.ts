@@ -5,9 +5,7 @@ import {
   Delete,
   Body,
   Param,
-  Req,
   UseInterceptors,
-  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { CreateCustomerUseCase } from './application/use-cases/create-customer.use-case';
@@ -16,7 +14,6 @@ import { CreateCustomerDto } from '@ai-coo/shared-types';
 import { createCustomerSchema } from '@ai-coo/validation';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { TenantInterceptor } from '../../common/interceptors/tenant.interceptor';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { DeleteCustomerUseCase } from './application/use-cases/delete-customer.use-case';
 

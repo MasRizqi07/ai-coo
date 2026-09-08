@@ -1,6 +1,7 @@
 import { fetchApi } from '../../../lib/api';
 import { getToken } from '../../actions/auth';
 import { redirect } from 'next/navigation';
+import { Product } from '@ai-coo/shared-types';
 import ProductsClientView from './client-view';
 
 export default async function ProductsPage() {
@@ -11,7 +12,7 @@ export default async function ProductsPage() {
   }
 
   try {
-    const products = await fetchApi<any[]>('/products', { token });
+    const products = await fetchApi<Product[]>('/products', { token });
     return <ProductsClientView initialProducts={products} />;
   } catch (error) {
     console.error('Failed to fetch products', error);

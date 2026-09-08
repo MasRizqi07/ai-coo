@@ -64,6 +64,10 @@ export class Customer extends Entity<CustomerProps> {
     return this.props.deletedAt;
   }
 
+  public get lastPurchaseAt(): Date | undefined {
+    return this.props.lastPurchaseAt;
+  }
+
   /**
    * Domain behavior: Soft delete the customer
    */

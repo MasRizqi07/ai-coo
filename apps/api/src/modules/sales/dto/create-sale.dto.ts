@@ -1,4 +1,12 @@
-import { IsString, IsNumber, IsOptional, IsArray, ValidateNested, Min, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsArray,
+  ValidateNested,
+  Min,
+  IsEnum,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaymentMethod } from '@ai-coo/shared-types';
 
@@ -37,4 +45,3 @@ export class CreateSaleDto {
   @Type(() => SaleItemDto)
   items!: SaleItemDto[];
 }
-

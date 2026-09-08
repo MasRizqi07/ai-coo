@@ -11,7 +11,6 @@ import {
   Package,
   Trash2,
   RefreshCw,
-  AlertTriangle,
   Tag,
   Boxes,
   X,
@@ -22,11 +21,12 @@ import {
   deleteProductAction,
 } from '../../actions/products';
 import { toast } from 'sonner';
+import { Product } from '@ai-coo/shared-types';
 
 export default function ProductsClientView({
   initialProducts: products,
 }: {
-  initialProducts: any[];
+  initialProducts: Product[];
 }) {
   const [showAddForm, setShowAddForm] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -35,7 +35,7 @@ export default function ProductsClientView({
   const [selectedStatus, setSelectedStatus] = React.useState<'ALL' | 'CRITICAL' | 'LOW' | 'SAFE'>('ALL');
 
   // Restock Modal State
-  const [restockModalProduct, setRestockModalProduct] = React.useState<any | null>(null);
+  const [restockModalProduct, setRestockModalProduct] = React.useState<Product | null>(null);
   const [restockQuantity, setRestockQuantity] = React.useState<number>(10);
 
   const formatCurrency = (value: number) => {
@@ -116,7 +116,7 @@ export default function ProductsClientView({
           </p>
         </div>
         <Button
-          className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
+          className="gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20"
           onClick={() => setShowAddForm(!showAddForm)}
         >
           <Plus className="w-4 h-4 text-slate-950" />
@@ -240,15 +240,17 @@ export default function ProductsClientView({
 
         {/* Status Filter Tabs */}
         <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-semibold">
-          {[
-            { id: 'ALL', label: 'Semua' },
-            { id: 'CRITICAL', label: 'Kritis (≤5)' },
-            { id: 'LOW', label: 'Menipis' },
-            { id: 'SAFE', label: 'Aman' },
-          ].map((tab) => (
+          {(
+            [
+              { id: 'ALL', label: 'Semua' },
+              { id: 'CRITICAL', label: 'Kritis (≤5)' },
+              { id: 'LOW', label: 'Menipis' },
+              { id: 'SAFE', label: 'Aman' },
+            ] as const
+          ).map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setSelectedStatus(tab.id as any)}
+              onClick={() => setSelectedStatus(tab.id)}
               className={`px-3 py-1.5 rounded-lg transition-colors ${
                 selectedStatus === tab.id
                   ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'

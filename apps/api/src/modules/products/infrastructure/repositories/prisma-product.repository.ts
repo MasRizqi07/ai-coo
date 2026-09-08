@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { Product as PrismaProduct } from '@ai-coo/database';
 import { IProductRepository } from '../../domain/repositories/product.repository.interface';
 import { Product } from '../../domain/entities/product.entity';
 import { Money } from '../../../../common/domain/value-objects/money.vo';
@@ -17,12 +18,12 @@ export class PrismaProductRepository implements IProductRepository {
     return companyId;
   }
 
-  private mapToDomain(record: any): Product {
+  private mapToDomain = (record: PrismaProduct): Product => {
     return Product.create(
       {
         companyId: record.companyId,
         name: record.name,
-        sku: record.sku,
+        sku: record.sku ?? undefined,
         category: record.category,
         minStockLevel: record.minStockLevel,
         price: Money.create(Number(record.price)),
@@ -33,7 +34,7 @@ export class PrismaProductRepository implements IProductRepository {
       },
       record.id,
     );
-  }
+  };
 
   async save(product: Product): Promise<void> {
     // Assert companyId matches current tenant context
@@ -82,7 +83,7 @@ export class PrismaProductRepository implements IProductRepository {
       where: { companyId: this.companyId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
     });
-    return records.map(this.mapToDomain);
+    return records.map((record) => this.mapToDomain(record));
   }
 
   async delete(id: string): Promise<void> {

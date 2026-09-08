@@ -5,9 +5,7 @@ import {
   Delete,
   Body,
   Param,
-  Req,
   UseInterceptors,
-  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { CreateProductUseCase } from './application/use-cases/create-product.use-case';
@@ -17,7 +15,6 @@ import { CreateProductDto, RestockProductDto } from '@ai-coo/shared-types';
 import { createProductSchema, restockProductSchema } from '@ai-coo/validation';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { TenantInterceptor } from '../../common/interceptors/tenant.interceptor';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { DeleteProductUseCase } from './application/use-cases/delete-product.use-case';
 
@@ -51,14 +48,14 @@ export class ProductsController {
   async findAll() {
     const products = await this.getProductsUseCase.execute();
 
-    return products.map((p: any) => ({
+    return products.map((p) => ({
       id: p.id,
       name: p.name,
-      sku: p.props.sku,
-      category: p.props.category || 'Umum',
+      sku: p.sku,
+      category: p.category || 'Umum',
       price: p.price.amount,
       stockQuantity: p.stockQuantity,
-      minStockLevel: p.props.minStockLevel || 10,
+      minStockLevel: p.minStockLevel || 10,
       createdAt: p.props.createdAt,
     }));
   }
