@@ -16,6 +16,7 @@ import {
   CreditCard,
   Banknote,
   QrCode,
+  Clock,
   Trash2,
 } from 'lucide-react';
 import { createSaleAction } from '../../actions/sales';
@@ -35,7 +36,7 @@ interface CompletedSale extends Omit<Partial<Sale>, 'paymentMethod'> {
   total: number;
   paid: number;
   change: number;
-  paymentMethod: PaymentMethod | 'CASH' | 'QRIS' | 'TRANSFER';
+  paymentMethod: PaymentMethod;
   itemsDetailed: CompletedSaleItem[];
 }
 
@@ -57,7 +58,7 @@ export default function SalesClientView({
   // Cart & Checkout State
   const [selectedCustomer, setSelectedCustomer] = React.useState<string>('');
   const [cartItems, setCartItems] = React.useState<{ productId: string; quantity: number }[]>([]);
-  const [paymentMethod, setPaymentMethod] = React.useState<'CASH' | 'QRIS' | 'TRANSFER'>('CASH');
+  const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>(PaymentMethod.CASH);
   const [paidAmount, setPaidAmount] = React.useState<string>('');
   const [notes, setNotes] = React.useState<string>('');
 
@@ -384,12 +385,13 @@ export default function SalesClientView({
                         <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
                           Metode Pembayaran
                         </label>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                           {(
                             [
-                              { id: 'CASH', label: 'Tunai', icon: Banknote },
-                              { id: 'QRIS', label: 'QRIS', icon: QrCode },
-                              { id: 'TRANSFER', label: 'Transfer', icon: CreditCard },
+                              { id: PaymentMethod.CASH, label: 'Tunai', icon: Banknote },
+                              { id: PaymentMethod.QRIS, label: 'QRIS', icon: QrCode },
+                              { id: PaymentMethod.TRANSFER, label: 'Transfer', icon: CreditCard },
+                              { id: PaymentMethod.KASBON, label: 'Kasbon', icon: Clock },
                             ] as const
                           ).map((pm) => (
                             <button
@@ -410,7 +412,7 @@ export default function SalesClientView({
                       </div>
 
                       {/* Cash Calculator if CASH is selected */}
-                      {paymentMethod === 'CASH' && (
+                      {paymentMethod === PaymentMethod.CASH && (
                         <div className="space-y-2 p-3 bg-slate-900/90 rounded-xl border border-slate-800">
                           <label className="text-[11px] font-bold text-slate-300">
                             Uang Diterima (Rp)

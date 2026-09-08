@@ -41,51 +41,56 @@ export default function LoginPage() {
       className="space-y-6"
     >
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-slate-400">Enter your credentials to access your dashboard</p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Selamat Datang Kembali</h1>
+        <p className="text-slate-400">Masuk untuk mengelola operasional toko dan kasir Anda</p>
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         {error && (
-          <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md">
+          <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl">
             {error}
           </div>
         )}
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Alamat Email</Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="owner@umkm.id"
+            placeholder="owner@toko.id"
             required
             disabled={loading}
           />
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              href="#"
-              className="text-sm font-medium text-amber-500 hover:text-amber-400 transition-colors"
-            >
-              Forgot password?
-            </Link>
+            <Label htmlFor="password">Kata Sandi</Label>
           </div>
-          <Input id="password" name="password" type="password" required disabled={loading} />
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            required
+            disabled={loading}
+          />
         </div>
-        <Button className="w-full gap-2 mt-4" type="submit" disabled={loading}>
-          {loading ? 'Signing In...' : 'Sign In'} <ArrowRight className="w-4 h-4" />
+        <Button
+          className="w-full gap-2 mt-4 bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? 'Sedang Masuk...' : 'Masuk ke Akun Toko'} <ArrowRight className="w-4 h-4 text-slate-950" />
         </Button>
       </form>
 
       <div className="text-center text-sm text-slate-400">
-        Don&apos;t have an account?{' '}
+        Belum memiliki akun toko?{' '}
         <Link
           href="/register"
-          className="font-medium text-amber-500 hover:text-amber-400 transition-colors"
+          className="font-bold text-amber-400 hover:text-amber-300 transition-colors"
         >
-          Register here
+          Daftar Toko Gratis
         </Link>
       </div>
     </motion.div>

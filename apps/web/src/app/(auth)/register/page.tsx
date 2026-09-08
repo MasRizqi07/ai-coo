@@ -47,35 +47,35 @@ export default function RegisterPage() {
       className="space-y-6"
     >
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
-        <p className="text-slate-400">Start managing your UMKM business smarter</p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Daftarkan Toko Anda</h1>
+        <p className="text-slate-400">Mulai kelola kasir, stok barang, dan arahan cerdas AI COO</p>
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         {error && (
-          <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md">
+          <div className="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl">
             {error}
           </div>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="companyName">Company Name</Label>
+          <Label htmlFor="companyName">Nama Usaha / Toko</Label>
           <Input
             id="companyName"
             name="companyName"
-            placeholder="Toko Maju Jaya"
+            placeholder="Contoh: Warkop Berkah Nusantara"
             required
             disabled={loading}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="businessType">Business Type</Label>
+          <Label htmlFor="businessType">Kategori Bisnis UMKM</Label>
           <select
-            aria-label="Business Type"
+            aria-label="Kategori Bisnis"
             id="businessType"
             name="businessType"
-            className="flex h-10 w-full rounded-md border border-slate-700 bg-slate-900/50 px-3 py-2 text-sm text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 transition-colors"
+            className="flex h-10 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 transition-colors"
             required
             disabled={loading}
           >
@@ -90,7 +90,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="userName">Your Name</Label>
+          <Label htmlFor="userName">Nama Pemilik / Penanggung Jawab</Label>
           <Input
             id="userName"
             name="userName"
@@ -101,41 +101,46 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Alamat Email Login</Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="budi@example.com"
+            placeholder="budi@toko.id"
             required
             disabled={loading}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Kata Sandi (Minimal 8 Karakter)</Label>
           <Input
             id="password"
             name="password"
             type="password"
+            placeholder="••••••••"
             required
             minLength={8}
             disabled={loading}
           />
         </div>
 
-        <Button className="w-full gap-2 mt-4" type="submit" disabled={loading}>
-          {loading ? 'Creating Account...' : 'Create Account'} <ArrowRight className="w-4 h-4" />
+        <Button
+          className="w-full gap-2 mt-4 bg-linear-to-r from-amber-500 to-orange-500 text-slate-950 font-bold hover:brightness-110"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? 'Mendaftarkan Akun...' : 'Daftar Toko Sekarang'} <ArrowRight className="w-4 h-4 text-slate-950" />
         </Button>
       </form>
 
       <div className="text-center text-sm text-slate-400">
-        Already have an account?{' '}
+        Sudah memiliki akun toko?{' '}
         <Link
           href="/login"
-          className="font-medium text-amber-500 hover:text-amber-400 transition-colors"
+          className="font-bold text-amber-400 hover:text-amber-300 transition-colors"
         >
-          Sign in
+          Masuk di sini
         </Link>
       </div>
     </motion.div>
