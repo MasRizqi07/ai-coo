@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, X } from 'lucide-react';
+
+import { BrandLogo } from './ui/BrandLogo';
 
 interface LandingNavbarProps {
   token?: string | null;
@@ -15,18 +17,8 @@ export function LandingNavbar({ token }: LandingNavbarProps) {
     <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-2xl transition-colors">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-xl p-1">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 to-orange-600 text-slate-950 font-black shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform motion-reduce:transition-none">
-            <Sparkles className="h-5 w-5 text-slate-950" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 font-black text-xl text-white tracking-tight">
-              AI <span className="text-amber-400">COO</span>
-            </div>
-            <p className="text-[10px] text-slate-400 font-medium tracking-wider uppercase">
-              Chief Operating Officer UMKM
-            </p>
-          </div>
+        <Link href="/" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-xl p-1">
+          <BrandLogo size="md" badgeText="UMKM AI" />
         </Link>
 
         {/* Desktop Navigation Links */}

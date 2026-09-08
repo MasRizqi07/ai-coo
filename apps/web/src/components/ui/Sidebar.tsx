@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { logoutAction } from '../../app/actions/auth';
+import { BrandLogo } from './BrandLogo';
 
 export interface SidebarProps {
   isOpen?: boolean;
@@ -85,22 +86,8 @@ export function Sidebar({
       >
         {/* Brand Header */}
         <div className="flex h-18 shrink-0 items-center justify-between border-b border-slate-800/80 px-5">
-          <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 via-orange-500 to-amber-600 text-slate-950 font-black shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">
-              <Brain className="h-5 w-5 text-slate-950" />
-              <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
-              </span>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 font-black tracking-tight text-white text-lg">
-                AI <span className="text-amber-400">COO</span>
-              </div>
-              <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">
-                UMKM Intelligent OS
-              </p>
-            </div>
+          <Link href="/dashboard" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-xl p-1">
+            <BrandLogo size="md" badgeText="UMKM AI" />
           </Link>
 
           {/* Close button on mobile */}

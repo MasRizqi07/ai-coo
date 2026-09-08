@@ -8,8 +8,10 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Card } from '../../../components/ui/Card';
-import { ArrowRight, Eye, EyeOff, Brain, Lock, Mail } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { loginAction } from '../../actions/auth';
+
+import { BrandLogo } from '../../../components/ui/BrandLogo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,17 +48,17 @@ export default function LoginPage() {
         {/* Subtle Ambient Glow */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
 
-        {/* Brand Icon Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-amber-500 to-orange-500 text-slate-950 font-black shadow-lg shadow-amber-500/20">
-            <Brain className="h-6 w-6 text-slate-950" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-              Selamat Datang
-            </h1>
-            <p className="text-xs text-slate-400">Masuk ke pusat operasional bisnis UMKM Anda</p>
-          </div>
+        {/* Brand Header */}
+        <div className="flex flex-col items-center text-center mb-6">
+          <Link href="/" className="mb-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-xl p-1">
+            <BrandLogo size="lg" badgeText="UMKM AI" />
+          </Link>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white mt-1">
+            Masuk ke Dashboard
+          </h1>
+          <p className="text-xs text-slate-400 mt-1">
+            Pantau omset kasir, stok kritis, dan briefing harian operasional bisnis Anda.
+          </p>
         </div>
 
         {error && (

@@ -109,7 +109,14 @@ export function ReceiptModal({ isOpen, onClose, receipt }: ReceiptModalProps) {
             </button>
 
             {/* Thermal Receipt Paper Container */}
-            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-inner font-mono text-xs print:border-none print:p-0 print:bg-white print:text-black">
+            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-inner font-mono text-xs print:border-none print:p-0 print:bg-white print:text-black relative overflow-hidden">
+              {/* Jagged Edge Top Simulation */}
+              <div className="flex justify-between gap-1 mb-3 opacity-40 select-none print:hidden">
+                {Array.from({ length: 14 }).map((_, i) => (
+                  <span key={i} className="w-2 h-2 rounded-full bg-slate-800 shrink-0" />
+                ))}
+              </div>
+
               {/* Receipt Header */}
               <div className="text-center pb-4 border-b border-dashed border-slate-800 print:border-slate-400">
                 <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 mb-2 print:hidden">
@@ -195,6 +202,13 @@ export function ReceiptModal({ isOpen, onClose, receipt }: ReceiptModalProps) {
               <div className="text-center pt-3 border-t border-dashed border-slate-800 text-[10px] text-slate-500 print:border-slate-400 print:text-gray-600">
                 <p>Terima kasih atas kunjungan Anda!</p>
                 <p className="mt-0.5">Barang yang sudah dibeli tidak dapat ditukar/dikembalikan.</p>
+              </div>
+
+              {/* Jagged Edge Bottom Simulation */}
+              <div className="flex justify-between gap-1 mt-4 opacity-40 select-none print:hidden">
+                {Array.from({ length: 14 }).map((_, i) => (
+                  <span key={i} className="w-2 h-2 rounded-full bg-slate-800 shrink-0" />
+                ))}
               </div>
             </div>
 
