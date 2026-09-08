@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Logger } from '@antigravity/logger';
+import { Logger } from '@ai-coo/logger';
 import { z } from 'zod';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';

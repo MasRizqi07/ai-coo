@@ -26,18 +26,18 @@ importers:
       '@ai-coo/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@ai-coo/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@ai-coo/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       '@ai-coo/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       '@ai-coo/validation':
         specifier: workspace:*
         version: link:../../packages/validation
-      '@antigravity/logger':
-        specifier: file:../../../../packages/logger
-        version: file:../../packages/logger
-      '@antigravity/security':
-        specifier: file:..\..\..\..\packages\security
-        version: file:../../packages/security
       '@nestjs/bullmq':
         specifier: ^11.0.4
         version: 11.0.4(@nestjs/common@11.1.27(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.27)(bullmq@5.79.0)
@@ -294,6 +294,65 @@ importers:
         specifier: ^8
         version: 8.61.1(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
 
+  packages/logger:
+    dependencies:
+      pino:
+        specifier: ^9.0.0
+        version: 9.14.0
+      pino-pretty:
+        specifier: ^13.0.0
+        version: 13.1.3
+    devDependencies:
+      '@ai-coo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@types/node':
+        specifier: ^22
+        version: 22.19.21
+      eslint:
+        specifier: ^9.39.4
+        version: 9.39.4(jiti@2.7.0)
+      rimraf:
+        specifier: ^6
+        version: 6.1.3
+      tsup:
+        specifier: ^8
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7
+        version: 5.9.3
+
+  packages/security:
+    dependencies:
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.6
+      helmet:
+        specifier: ^8.0.0
+        version: 8.2.0
+    devDependencies:
+      '@ai-coo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@types/cors':
+        specifier: ^2.8.17
+        version: 2.8.19
+      '@types/node':
+        specifier: ^22
+        version: 22.19.21
+      eslint:
+        specifier: ^9.39.4
+        version: 9.39.4(jiti@2.7.0)
+      rimraf:
+        specifier: ^6
+        version: 6.1.3
+      tsup:
+        specifier: ^8
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7
+        version: 5.9.3
+
   packages/shared-types:
     devDependencies:
       '@ai-coo/eslint-config':
@@ -376,12 +435,6 @@ packages:
   '@angular-devkit/schematics@19.2.27':
     resolution: {integrity: sha512-/PZmyAlb2NGWPikRRuiWLdfHQd8Wrx6lX4HqvTcaDhlU43M3T0ud4PH2T3QDp7BzHYY92xtD8iPxX2asg67G1A==}
     engines: {node: ^18.19.1 || ^20.11.1 || >=22.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
-
-  '@antigravity/logger@file:../../packages/logger':
-    resolution: {directory: ../../packages/logger, type: directory}
-
-  '@antigravity/security@file:../../packages/security':
-    resolution: {directory: ../../packages/security, type: directory}
 
   '@asamuzakjp/css-color@5.1.11':
     resolution: {integrity: sha512-KVw6qIiCTUQhByfTd78h2yD1/00waTmm9uy/R7Ck/ctUyAPj+AEDLkQIdJW0T8+qGgj3j5bpNKK7Q3G+LedJWg==}
@@ -2013,6 +2066,9 @@ packages:
   '@types/cookiejar@2.1.5':
     resolution: {integrity: sha512-he+DHOWReW0nghN24E1WUqM0efK4kI9oTqDm6XmK8ZPe2djZ90BSNdGnIyCLzCPw7/pogPlGbzI2wHGGmi4O/Q==}
 
+  '@types/cors@2.8.19':
+    resolution: {integrity: sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==}
+
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
@@ -2880,6 +2936,7 @@ packages:
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
     engines: {node: '>=12.0.0'}
+    deprecated: v4 is no longer maintained, upgrade to v5
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -3240,6 +3297,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -5757,16 +5815,6 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@antigravity/logger@file:../../packages/logger':
-    dependencies:
-      pino: 9.14.0
-      pino-pretty: 13.1.3
-
-  '@antigravity/security@file:../../packages/security':
-    dependencies:
-      cors: 2.8.6
-      helmet: 8.2.0
-
   '@asamuzakjp/css-color@5.1.11':
     dependencies:
       '@asamuzakjp/generational-cache': 1.0.1
@@ -7232,6 +7280,10 @@ snapshots:
       '@types/node': 24.13.2
 
   '@types/cookiejar@2.1.5': {}
+
+  '@types/cors@2.8.19':
+    dependencies:
+      '@types/node': 24.13.2
 
   '@types/deep-eql@4.0.2': {}
 

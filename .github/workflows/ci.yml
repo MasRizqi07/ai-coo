@@ -82,7 +82,7 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -U postgres -d aicoo -f packages/database/prisma/migrations/20260621063000_enable_rls/migration.sql
 
       - name: Lint Codebase
-        run: pnpm lint || echo "Lint failed but ignoring for CI baseline"
+        run: pnpm lint
 
       - name: Typecheck and Build
         env:

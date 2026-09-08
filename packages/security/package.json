@@ -1,0 +1,35 @@
+{
+  "name": "@ai-coo/security",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "helmet": "^8.0.0"
+  },
+  "devDependencies": {
+    "@ai-coo/eslint-config": "workspace:*",
+    "@types/cors": "^2.8.17",
+    "@types/node": "^22",
+    "eslint": "^9.39.4",
+    "rimraf": "^6",
+    "tsup": "^8",
+    "typescript": "^5.7"
+  }
+}
