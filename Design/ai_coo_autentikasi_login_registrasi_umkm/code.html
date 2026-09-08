@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI COO — Masuk & Pendaftaran Akun UMKM</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: {
+              950: '#020617',
+              900: '#0f172a',
+              850: '#151f38',
+              800: '#1e293b',
+              700: '#334155',
+              600: '#475569',
+              400: '#94a3b8',
+              300: '#cbd5e1',
+              100: '#f1f5f9',
+            },
+            amber: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          },
+          fontFamily: {
+            sans: ['Geist', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Geist', sans-serif;
+    }
+    .ambient-radial-glow {
+      background: radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.14) 0%, rgba(245, 158, 11, 0.03) 45%, transparent 70%);
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .tab-active {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+    .tab-inactive {
+      background-color: transparent;
+      color: #94a3b8;
+      border: 1px solid transparent;
+    }
+    .tab-inactive:hover {
+      color: #f1f5f9;
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen relative flex items-center justify-center p-4 sm:p-6 antialiased selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Ambient Glow Background Effects -->
+  <div class="fixed inset-0 ambient-radial-glow pointer-events-none z-0"></div>
+  <div class="fixed -top-40 -left-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+
+  <!-- Decorative Subtle Grid -->
+  <div class="fixed inset-0 bg-[linear-gradient(to_right,#1e293b0f_1px,transparent_1px),linear-gradient(to_bottom,#1e293b0f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none z-0"></div>
+
+  <!-- Main Authenticated Box Container -->
+  <main class="relative z-10 w-full max-w-[480px] my-6">
+
+    <!-- Brand Header -->
+    <div class="flex flex-col items-center text-center mb-6">
+      <a href="/" class="inline-flex items-center gap-3 mb-3 group focus:outline-none" title="Kembali ke Beranda AI COO">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/30 flex items-center justify-center shadow-lg shadow-amber-500/10 group-hover:border-amber-500/60 group-hover:shadow-amber-500/20 transition-all duration-300">
+          <svg class="w-6 h-6 text-amber-500 transition-transform duration-300 group-hover:scale-110" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 18h.01"></path>
+            <path d="M7 18h.01"></path>
+            <path d="M17 18h.01"></path>
+            <path d="M9.5 2a3.5 3.5 0 0 0-3.5 3.5c0 1.25.66 2.35 1.63 2.95A4.5 4.5 0 0 0 6 12a4.5 4.5 0 0 0 2 3.75V19a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-3.25A4.5 4.5 0 0 0 18 12a4.5 4.5 0 0 0-1.63-3.55A3.5 3.5 0 0 0 14.5 2h-5z"></path>
+          </svg>
+        </div>
+        <div class="text-left">
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-black tracking-tight text-white">AI COO</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">UMKM AI</span>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Executive Operating System</span>
+        </div>
+      </a>
+      <h1 id="page-title" class="text-2xl font-bold tracking-tight text-white mt-1">Masuk ke Dashboard</h1>
+      <p id="page-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1 max-w-sm">Pantau omset kasir, stok kritis, dan briefing harian operasional bisnis Anda.</p>
+    </div>
+
+    <!-- Glassmorphic Form Card -->
+    <div class="glass-card rounded-2xl border border-slate-800/80 p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+
+      <!-- Top Subtle Light Beam -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent"></div>
+
+      <!-- Segmented State Tabs (Login vs Register) -->
+      <div class="grid grid-cols-2 p-1 bg-slate-950/70 border border-slate-800 rounded-xl mb-6 gap-1" role="tablist">
+        <button id="tab-login-btn" type="button" onclick="switchAuthTab('login')" class="tab-active py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-200" role="tab" aria-selected="true">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>Masuk</span>
+        </button>
+        <button id="tab-register-btn" type="button" onclick="switchAuthTab('register')" class="tab-inactive py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-200" role="tab" aria-selected="false">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+          <span>Daftar Baru</span>
+          <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">Gratis</span>
+        </button>
+      </div>
+
+      <!-- Alert Notification Banner (Simulated) -->
+      <div id="status-toast" class="hidden mb-5 p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-xs flex items-start gap-2.5 animate-in fade-in">
+        <i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5 text-emerald-400 shrink-0"></i>
+        <div>
+          <span class="font-semibold block text-emerald-200">Koneksi Aman</span>
+          <span id="toast-message">Akun diverifikasi menggunakan otentikasi JWT terenkripsi multi-tenant.</span>
+        </div>
+      </div>
+
+      <!-- 1. LOGIN FORM SECTION -->
+      <form id="form-login" onsubmit="handleAuthSubmit(event, 'login')" class="space-y-4">
+        <!-- Email Input -->
+        <div class="space-y-1.5">
+          <label for="login-email" class="block text-xs font-semibold text-slate-300">
+            Email Bisnis Terdaftar
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input
+              type="email"
+              id="login-email"
+              required
+              placeholder="budi@warkopsenja.com"
+              value="owner@warkopsenja.id"
+              class="w-full h-11 pl-10 pr-3.5 bg-slate-900/60 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-colors"
+            >
+          </div>
+        </div>
+
+        <!-- Password Input with Toggle -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="login-password" class="block text-xs font-semibold text-slate-300">
+              Kata Sandi
+            </label>
+            <a href="javascript:void(0)" onclick="forgotPasswordNotice()" class="text-xs text-amber-500 hover:text-amber-400 font-medium transition-colors">
+              Lupa kata sandi?
+            </a>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input
+              type="password"
+              id="login-password"
+              required
+              placeholder="Minimal 6 karakter"
+              value="WarkopSenja2026!"
+              class="w-full h-11 pl-10 pr-10 bg-slate-900/60 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-colors"
+            >
+            <button
+              type="button"
+              onclick="togglePasswordVisibility('login-password', 'login-eye-icon')"
+              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none"
+              title="Lihat kata sandi"
+            >
+              <i id="login-eye-icon" data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Remember Me checkbox & Tenant ID demo tag -->
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500/30 focus:ring-offset-0 focus:ring-1">
+            <span class="text-xs text-slate-400 font-normal">Ingat sesi saya (30 hari)</span>
+          </label>
+          <span class="text-[11px] text-slate-500 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> API 200 OK
+          </span>
+        </div>
+
+        <!-- Submit Button Login -->
+        <button
+          type="submit"
+          id="btn-submit-login"
+          class="w-full h-11 bg-amber-500 hover:bg-amber-400 active:scale-[0.99] text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 text-sm transition-all duration-150 mt-2"
+        >
+          <span>Masuk ke Akun</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Quick Demo Fast-Login Option for reviewer -->
+        <div class="pt-2 border-t border-slate-800/60 text-center">
+          <button
+            type="button"
+            onclick="fillDemoAccount()"
+            class="text-[11px] text-slate-400 hover:text-amber-400 font-medium inline-flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-colors"
+          >
+            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span>Gunakan Akun Demo (Warkop Kenangan Senja)</span>
+          </button>
+        </div>
+      </form>
+
+
+      <!-- 2. REGISTER FORM SECTION (Hidden by default, switched by tab) -->
+      <form id="form-register" onsubmit="handleAuthSubmit(event, 'register')" class="hidden space-y-3.5">
+        
+        <!-- Two Column Name and Email -->
+        <div class="space-y-1.5">
+          <label for="reg-name" class="block text-xs font-semibold text-slate-300">
+            Nama Lengkap Pemilik
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+            <input
+              type="text"
+              id="reg-name"
+              required
+              placeholder="Achmad Budi"
+              class="w-full h-10 pl-10 pr-3.5 bg-slate-900/60 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-colors"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="reg-email" class="block text-xs font-semibold text-slate-300">
+            Email Bisnis
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input
+              type="email"
+              id="reg-email"
+              required
+              placeholder="budi@warkopbarokah.com"
+              class="w-full h-10 pl-10 pr-3.5 bg-slate-900/60 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-colors"
+            >
+          </div>
+        </div>
+
+        <!-- Password Field with Toggle -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="reg-password" class="block text-xs font-semibold text-slate-300">
+              Kata Sandi
+            </label>
+            <span class="text-[10px] text-slate-500">Min. 6 karakter</span>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input
+              type="password"
+              id="reg-password"
+              required
+              minlength="6"
+              placeholder="Kombinasi huruf & angka"
+              class="w-full h-10 pl-10 pr-10 bg-slate-900/60 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-colors"
+            >
+            <button
+              type="button"
+              onclick="togglePasswordVisibility('reg-password', 'reg-eye-icon')"
+              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none"
+              title="Lihat kata sandi"
+            >
+              <i id="reg-eye-icon" data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Company / Store Name -->
+        <div class="space-y-1.5">
+          <label for="reg-company" class="block text-xs font-semibold text-slate-300">
+            Nama Usaha / Perusahaan
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="store" class="w-4 h-4"></i>
+            </div>
+            <input
+              type="text"
+              id="reg-company"
+              required
+              placeholder="Kopi Senja Sentosa"
+              class="w-full h-10 pl-10 pr-3.5 bg-slate-900/60 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-colors"
+            >
+          </div>
+        </div>
+
+        <!-- Business Category Select -->
+        <div class="space-y-1.5">
+          <label for="reg-category" class="block text-xs font-semibold text-slate-300">
+            Kategori Bisnis
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="tag" class="w-4 h-4"></i>
+            </div>
+            <select
+              id="reg-category"
+              required
+              class="w-full h-10 pl-10 pr-9 bg-slate-900/90 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20 transition-colors appearance-none cursor-pointer"
+            >
+              <option value="" disabled selected class="text-slate-500">Pilih jenis usaha Anda</option>
+              <option value="WARKOP" class="bg-slate-900 text-slate-100">Warkop / Kafe & Minuman</option>
+              <option value="RETAIL" class="bg-slate-900 text-slate-100">Toko Kelontong / Retail & Sembako</option>
+              <option value="LAUNDRY" class="bg-slate-900 text-slate-100">Laundry Kiloan / Satuan</option>
+              <option value="BENGKEL" class="bg-slate-900 text-slate-100">Bengkel / Otomotif</option>
+              <option value="TOKO_BANGUNAN" class="bg-slate-900 text-slate-100">Toko Bangunan & Material</option>
+              <option value="DISTRIBUTOR" class="bg-slate-900 text-slate-100">Distributor / Grosir</option>
+              <option value="OTHER" class="bg-slate-900 text-slate-100">Lainnya (Jasa / FnB)</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms agreement notice -->
+        <div class="pt-1">
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Dengan mendaftar, Anda menyetujui <a href="javascript:void(0)" class="text-amber-500 hover:underline">Ketentuan Layanan</a> & <a href="javascript:void(0)" class="text-amber-500 hover:underline">Kebijakan Privasi</a> AI COO Indonesia.
+          </p>
+        </div>
+
+        <!-- Submit Button Register -->
+        <button
+          type="submit"
+          id="btn-submit-register"
+          class="w-full h-11 bg-amber-500 hover:bg-amber-400 active:scale-[0.99] text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 text-sm transition-all duration-150 mt-2"
+        >
+          <span>Daftar Akun Bisnis</span>
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- Card Footer Switch Action -->
+      <div class="mt-6 pt-5 border-t border-slate-800/80 text-center text-xs text-slate-400">
+        <span id="footer-prompt-text">Belum punya akun bisnis?</span>
+        <button
+          type="button"
+          id="footer-switch-btn"
+          onclick="toggleActiveTab()"
+          class="ml-1 text-amber-500 hover:text-amber-400 font-semibold focus:outline-none transition-colors"
+        >
+          Daftar sekarang (Gratis)
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Security & Trust Badge Bar -->
+    <div class="mt-6 flex flex-col items-center gap-2 text-center text-xs text-slate-400">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/60 border border-slate-800/80 text-[11px] text-slate-400 shadow-sm">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>Data bisnis Anda terisolasi dengan enkripsi multi-tenant 256-bit</span>
+      </div>
+      <div class="flex items-center justify-center gap-4 text-[11px] text-slate-400 mt-1">
+        <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3 text-amber-500"></i> Setup < 3 Menit</span>
+        <span>•</span>
+        <span class="flex items-center gap-1"><i data-lucide="smartphone" class="w-3 h-3 text-blue-400"></i> Tablet & Kasir POS Ready</span>
+        <span>•</span>
+        <span>WIB Realtime</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive Client-side Scripting -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    let currentTab = 'login';
+
+    function switchAuthTab(tab) {
+      currentTab = tab;
+      const loginBtn = document.getElementById('tab-login-btn');
+      const registerBtn = document.getElementById('tab-register-btn');
+      const formLogin = document.getElementById('form-login');
+      const formRegister = document.getElementById('form-register');
+      const pageTitle = document.getElementById('page-title');
+      const pageSubtitle = document.getElementById('page-subtitle');
+      const footerPrompt = document.getElementById('footer-prompt-text');
+      const footerSwitch = document.getElementById('footer-switch-btn');
+      const statusToast = document.getElementById('status-toast');
+
+      // Hide toast upon manual switch
+      statusToast.classList.add('hidden');
+
+      if (tab === 'login') {
+        // Tab styling
+        loginBtn.className = 'tab-active py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-200';
+        loginBtn.setAttribute('aria-selected', 'true');
+        registerBtn.className = 'tab-inactive py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-200';
+        registerBtn.setAttribute('aria-selected', 'false');
+
+        // Form visibility
+        formLogin.classList.remove('hidden');
+        formRegister.classList.add('hidden');
+
+        // Text labels
+        pageTitle.textContent = 'Masuk ke Dashboard';
+        pageSubtitle.textContent = 'Pantau omset kasir, stok kritis, dan briefing harian operasional bisnis Anda.';
+        footerPrompt.textContent = 'Belum punya akun bisnis?';
+        footerSwitch.textContent = 'Daftar sekarang (Gratis)';
+      } else {
+        // Register active
+        registerBtn.className = 'tab-active py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-200';
+        registerBtn.setAttribute('aria-selected', 'true');
+        loginBtn.className = 'tab-inactive py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-200';
+        loginBtn.setAttribute('aria-selected', 'false');
+
+        // Form visibility
+        formLogin.classList.add('hidden');
+        formRegister.classList.remove('hidden');
+
+        // Text labels
+        pageTitle.textContent = 'Daftar Akun UMKM Baru';
+        pageSubtitle.textContent = 'Mulai kelola kasir POS, stok real-time, dan asisten AI pintar dalam hitungan menit.';
+        footerPrompt.textContent = 'Sudah punya akun AI COO?';
+        footerSwitch.textContent = 'Masuk di sini';
+      }
+
+      // Re-create icons for newly rendered DOM state if needed
+      lucide.createIcons();
+    }
+
+    function toggleActiveTab() {
+      switchAuthTab(currentTab === 'login' ? 'register' : 'login');
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    function forgotPasswordNotice() {
+      const toast = document.getElementById('status-toast');
+      const toastMsg = document.getElementById('toast-message');
+      toast.classList.remove('hidden');
+      toastMsg.textContent = 'Instruksi pemulihan kata sandi telah disiapkan untuk dikirim ke email terdaftar Anda.';
+    }
+
+    function fillDemoAccount() {
+      document.getElementById('login-email').value = 'budi@warkopsenjajakarta.id';
+      document.getElementById('login-password').value = 'WarkopSenja#2026';
+      const toast = document.getElementById('status-toast');
+      const toastMsg = document.getElementById('toast-message');
+      toast.classList.remove('hidden');
+      toastMsg.textContent = 'Kredensial demo "Warkop Kenangan Senja" terisi otomatis. Klik Masuk ke Akun.';
+    }
+
+    function handleAuthSubmit(event, type) {
+      event.preventDefault();
+      const btn = type === 'login' ? document.getElementById('btn-submit-login') : document.getElementById('btn-submit-register');
+      const originalText = btn.innerHTML;
+      
+      // Loading State
+      btn.disabled = true;
+      btn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Memproses Verifikasi...</span>
+      `;
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        const toast = document.getElementById('status-toast');
+        const toastMsg = document.getElementById('toast-message');
+        toast.classList.remove('hidden');
+        if (type === 'login') {
+          toastMsg.textContent = 'Autentikasi berhasil! Mengalihkan ke Dashboard Operasional AI COO...';
+        } else {
+          toastMsg.textContent = 'Pendaftaran entitas bisnis berhasil! Membuka wizard onboarding tenant...';
+        }
+        lucide.createIcons();
+      }, 900);
+    }
+  </script>
+</body>
+</html>

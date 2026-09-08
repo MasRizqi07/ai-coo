@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI COO — Sistem Error States, Mode Kasir Offline & Edge Cases</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              base: '#020617',
+              subtle: '#0f172a',
+              card: 'rgba(15, 23, 42, 0.6)',
+              elevated: 'rgba(15, 23, 42, 0.9)',
+            },
+            brand: {
+              amber: '#f59e0b',
+              amberHover: '#fbbf24',
+              orange: '#f97316',
+            }
+          },
+          fontFamily: {
+            sans: ['Geist', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes pulseSlow {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(1.04); }
+    }
+    .ambient-glow-red {
+      background: radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.08) 45%, transparent 75%);
+    }
+    .ambient-glow-amber {
+      background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.12), transparent 70%);
+    }
+    .pulse-ambient {
+      animation: pulseSlow 6s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-[#020617] text-slate-100 font-sans antialiased min-h-screen selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- ========================================================================= -->
+  <!-- COMPONENT 1: STICKY OFFLINE & SYNC WARNING BANNER (TOP OF SCREEN) -->
+  <!-- ========================================================================= -->
+  <aside class="sticky top-0 z-50 w-full bg-amber-500/15 border-b border-amber-500/35 text-amber-300 px-4 py-2.5 backdrop-blur-xl shadow-lg shadow-amber-950/20">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-3">
+        <!-- WifiOff Animated Pulse Icon -->
+        <div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+            <path d="M10.71 5.05A16 16 0 0 1 22.56 9"></path>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+          </svg>
+          <span class="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+        </div>
+
+        <div>
+          <span class="font-bold text-amber-200 tracking-wide uppercase text-[11px] bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40 mr-2">
+            Mode Kasir Darurat Aktif
+          </span>
+          <span class="text-slate-200 font-medium leading-relaxed">
+            Koneksi internet terputus (<span class="font-mono text-amber-300">navigator.onLine = false</span>). Transaksi penjualan disimpan aman di memori lokal (IndexedDB) dan akan disinkronkan otomatis saat online kembali.
+          </span>
+        </div>
+      </div>
+
+      <!-- Action & Local Queue Status -->
+      <div class="flex items-center gap-2.5 shrink-0 self-end md:self-center">
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-900/80 border border-slate-700/80 text-[11px] text-slate-300">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <span>Antrean Tertunda: <strong class="text-amber-400 font-mono">3 Struk</strong> (Rp 92.000)</span>
+        </div>
+
+        <button onclick="simulateReconnect(this)" class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all active:scale-95 text-[11px] shadow-sm">
+          <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span id="reconnect-text">Coba Hubungkan Ulang</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- DEMO CONTROLS & STATE SWITCHER BAR (TABS) -->
+  <!-- ========================================================================= -->
+  <header class="border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md px-6 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 font-black text-sm shadow-md shadow-amber-500/20">
+          AI
+        </div>
+        <div>
+          <h1 class="text-sm font-bold text-white flex items-center gap-2">
+            AI COO — Pusat Penanganan Galat & Edge Cases Operasional
+            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">Resilient UI v1.0</span>
+          </h1>
+          <p class="text-xs text-slate-400">Pilih skenario simulasi edge-case untuk menguji daya tahan aplikasi kasir UMKM:</p>
+        </div>
+      </div>
+
+      <!-- State Tab Buttons -->
+      <div class="flex items-center gap-1.5 p-1 bg-slate-950/80 border border-slate-800 rounded-xl">
+        <button onclick="switchView('view-404')" id="btn-404" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-slate-800 transition-all">
+          1. 404 Not Found (/not-found)
+        </button>
+        <button onclick="switchView('view-500')" id="btn-500" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">
+          2. 500 AI Pipeline Timeout
+        </button>
+        <button onclick="switchView('view-pos-offline')" id="btn-pos-offline" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">
+          3. POS Fallback Context
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 1: COMPONENT 2 - 404 HALAMAN TIDAK DITEMUKAN (/not-found) -->
+  <!-- ========================================================================= -->
+  <main id="view-404" class="view-panel relative min-h-[calc(100vh-108px)] flex items-center justify-center p-6 overflow-hidden">
+    <!-- Ambient Red / Amber Center Glow -->
+    <div class="absolute inset-0 ambient-glow-red pointer-events-none pulse-ambient"></div>
+    
+    <!-- Background Grid Pattern -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-xl w-full text-center flex flex-col items-center">
+      <!-- 404 Holographic Badge Icon -->
+      <div class="relative mb-6">
+        <div class="w-24 h-24 rounded-3xl bg-slate-900/90 border border-red-500/30 shadow-2xl shadow-red-500/10 flex items-center justify-center backdrop-blur-xl">
+          <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"></path>
+          </svg>
+        </div>
+        <span class="absolute -bottom-2 px-2.5 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-red-300 font-mono text-[10px] font-bold tracking-widest uppercase">
+          HTTP 404
+        </span>
+      </div>
+
+      <!-- Monospace Subtitle -->
+      <p class="font-mono text-xs font-semibold tracking-widest uppercase text-amber-400/90 mb-3 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        404 — HALAMAN TIDAK DITEMUKAN
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+      </p>
+
+      <!-- Clean Headline -->
+      <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight mb-4">
+        Sepertinya Anda Tersesat di Gudang Logistik
+      </h2>
+
+      <!-- Body Copy -->
+      <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-8">
+        Halaman yang Anda tuju tidak tersedia atau telah dipindahkan ke rute operasional lain. Seluruh data transaksi dan stok toko Anda tetap aman tersimpan.
+      </p>
+
+      <!-- Technical Route Diagnostic Box -->
+      <div class="w-full bg-slate-900/70 border border-slate-800 rounded-xl p-3.5 mb-8 text-left font-mono text-xs text-slate-400">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2 text-[11px] text-slate-500">
+          <span>DIAGNOSTIK RUTE OPERASIONAL</span>
+          <span class="text-amber-400">TENANT: WARKOP BERKAH</span>
+        </div>
+        <div class="space-y-1">
+          <p><span class="text-slate-600">REQ_PATH:</span> <span class="text-red-400 font-semibold">/sales/promosi-lama-2024</span></p>
+          <p><span class="text-slate-600">KODE_STATUS:</span> <span class="text-slate-300">404_ROUTE_UNDEFINED (Next.js 15 App Router)</span></p>
+          <p><span class="text-slate-600">SARAN_SISTEM:</span> <span class="text-emerald-400">Arahkan kembali ke Root Shell Dashboard (/(dashboard))</span></p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+        <button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-all active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"></path>
+          </svg>
+          <span>Kembali ke Dashboard Utama</span>
+        </button>
+
+        <button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 font-medium text-sm transition-all">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a.75.75 0 0 1-.774-.95 3.992 3.992 0 0 0 .736-2.188A8.444 8.444 0 0 1 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"></path>
+          </svg>
+          <span>Hubungi Bantuan Operasional</span>
+        </button>
+      </div>
+
+      <!-- Quick Helpful Links -->
+      <div class="mt-8 pt-6 border-t border-slate-800/80 flex items-center justify-center gap-6 text-xs text-slate-400">
+        <a href="#" class="hover:text-amber-400 transition-colors">Kasir POS Cepat</a>
+        <span class="text-slate-700">•</span>
+        <a href="#" class="hover:text-amber-400 transition-colors">Katalog & Stok</a>
+        <span class="text-slate-700">•</span>
+        <a href="#" class="hover:text-amber-400 transition-colors">Riwayat Transaksi</a>
+        <span class="text-slate-700">•</span>
+        <a href="#" class="hover:text-amber-400 transition-colors">Pengaturan Toko</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 2: COMPONENT 3 - 500 SYSTEM ERROR / AI SERVICE TIMEOUT FALLBACK CARD -->
+  <!-- ========================================================================= -->
+  <section id="view-500" class="view-panel hidden min-h-[calc(100vh-108px)] p-6 md:p-10 flex flex-col items-center justify-center relative">
+    <div class="absolute inset-0 ambient-glow-amber pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-2xl w-full">
+      <!-- Error Boundary Container -->
+      <div class="bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+        
+        <!-- Header with AlertOctagon Icon in red-400 -->
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/25 flex items-center justify-center text-red-400 shrink-0">
+            <!-- AlertOctagon -->
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-red-500/15 text-red-300 border border-red-500/30">
+                Fallback Tier 4 Active
+              </span>
+              <span class="text-xs text-slate-400 font-mono">ERR_UPSTREAM_TIMEOUT</span>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Terjadi Gangguan pada Sinkronisasi Data
+            </h3>
+          </div>
+        </div>
+
+        <!-- Subtext explaining tenant safety -->
+        <p class="text-sm sm:text-base text-slate-300 leading-relaxed mb-6 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+          Sistem isolasi data Anda tetap aman. Layanan backend sedang memulihkan context cache (<span class="font-mono text-amber-300">Redis & BullMQ</span>). Tidak ada data penjualan atau riwayat transaksi yang hilang.
+        </p>
+
+        <!-- Technical Telemetry & Resilience Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          <div class="p-3 rounded-xl bg-slate-950/50 border border-slate-800">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span>Database PostgreSQL 16</span>
+              <span class="text-emerald-400 font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Normal (ACID)
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400">Semua transaksi tercatat permanen di cloud storage.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950/50 border border-slate-800">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span>AI Engine (gpt-4o-mini)</span>
+              <span class="text-amber-400 font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Menggunakan Fallback Lokal
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400">Menyajikan ringkasan operasional tersimpan (<span class="font-mono text-amber-300">isStale: true</span>).</p>
+          </div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
+          <div class="text-xs text-slate-400 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"></path>
+            </svg>
+            <span>Auto-retry aktif setiap 30 detik</span>
+          </div>
+
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button onclick="simulateReload(this)" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-md transition-all active:scale-95">
+              <!-- RefreshCw icon -->
+              <svg id="reload-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"></path>
+              </svg>
+              <span id="reload-label">Segarkan Halaman (Reload)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 3: SIMULASI KASIR POS SAAT KONEKSI TERPUTUS (OFFLINE CONTEXT) -->
+  <!-- ========================================================================= -->
+  <section id="view-pos-offline" class="view-panel hidden min-h-[calc(100vh-108px)] p-6 max-w-7xl mx-auto">
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <h2 class="text-xl font-bold text-white">Kasir POS — Mode Transaksi Darurat Offline</h2>
+        </div>
+        <p class="text-xs text-slate-400">Kasir tetap dapat mencetak struk tunai & menyimpan pesanan pembeli meski internet toko sedang terputus.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-mono px-3 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
+          Terminal #01 (Kasir: Bang Budi)
+        </span>
+        <button class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700">
+          Ekspor Antrean Offline (.JSON)
+        </button>
+      </div>
+    </div>
+
+    <!-- 2-Column POS Layout Preview during Offline -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left: Offline Cart & Pending Records (7 cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"></path>
+              </svg>
+              Daftar Pesanan Siap Simpan Lokal
+            </h3>
+            <span class="text-xs text-slate-400">Pembeli: <strong>Walk-in (Umum)</strong></span>
+          </div>
+
+          <!-- Items list -->
+          <div class="divide-y divide-slate-800/80 mb-4">
+            <div class="py-2.5 flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-white">2x Kopi Susu Aren (Gula Aren Organik)</p>
+                <p class="text-xs text-slate-400">@ Rp 18.000 • Stok lokal: <span class="text-emerald-400 font-mono">42 cup</span></p>
+              </div>
+              <span class="text-sm font-bold text-white font-mono">Rp 36.000</span>
+            </div>
+            <div class="py-2.5 flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-white">1x Roti Bakar Cokelat Keju</p>
+                <p class="text-xs text-slate-400">@ Rp 16.000 • Stok lokal: <span class="text-emerald-400 font-mono">18 porsi</span></p>
+              </div>
+              <span class="text-sm font-bold text-white font-mono">Rp 16.000</span>
+            </div>
+          </div>
+
+          <!-- Total calculation -->
+          <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2 text-sm">
+            <div class="flex justify-between text-slate-400 text-xs">
+              <span>Metode Pembayaran:</span>
+              <span class="text-amber-300 font-bold">TUNAI (CASH ONLY)</span>
+            </div>
+            <div class="flex justify-between text-slate-400 text-xs">
+              <span>Status Verifikasi:</span>
+              <span class="text-slate-300">Menunggu Sinkronisasi Cloud</span>
+            </div>
+            <div class="border-t border-slate-800 pt-2 flex justify-between items-baseline">
+              <span class="font-bold text-white">Total Tagihan:</span>
+              <span class="text-xl font-black text-amber-400 font-mono">Rp 52.000</span>
+            </div>
+          </div>
+
+          <div class="mt-4 flex gap-3">
+            <button class="flex-1 py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-md transition-all active:scale-98">
+              Cetak Struk Fisik & Simpan Offline (Enter)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Pending Sync Queue Inspector (5 cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              Jurnal Sinkronisasi Tertunda (3)
+            </h3>
+            <span class="text-[11px] text-amber-400 font-mono">LocalStorage v1</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-4">Transaksi di bawah ini otomatis di-push ke server PostgreSQL begitu internet menyala:</p>
+
+          <div class="space-y-2.5 text-xs font-mono">
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+              <div>
+                <p class="text-slate-200 font-bold">#TRX-OFFLINE-001</p>
+                <p class="text-[11px] text-slate-400">14:28 WIB • 3 Item • Tunai</p>
+              </div>
+              <div class="text-right">
+                <p class="text-amber-400 font-bold">Rp 45.000</p>
+                <span class="text-[10px] text-amber-500/90 bg-amber-500/10 px-1.5 py-0.5 rounded">Pending Sync</span>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+              <div>
+                <p class="text-slate-200 font-bold">#TRX-OFFLINE-002</p>
+                <p class="text-[11px] text-slate-400">14:31 WIB • 1 Item • Tunai</p>
+              </div>
+              <div class="text-right">
+                <p class="text-amber-400 font-bold">Rp 18.000</p>
+                <span class="text-[10px] text-amber-500/90 bg-amber-500/10 px-1.5 py-0.5 rounded">Pending Sync</span>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+              <div>
+                <p class="text-slate-200 font-bold">#TRX-OFFLINE-003</p>
+                <p class="text-[11px] text-slate-400">14:35 WIB • 2 Item • Tunai</p>
+              </div>
+              <div class="text-right">
+                <p class="text-amber-400 font-bold">Rp 29.000</p>
+                <span class="text-[10px] text-amber-500/90 bg-amber-500/10 px-1.5 py-0.5 rounded">Pending Sync</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90">
+            💡 <strong>Info Kasir:</strong> Jangan bersihkan cache browser atau tutup jendela tab sebelum semua transaksi berstatus <span class="text-emerald-400 font-bold">Tersinkronisasi Cloud</span>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FOOTER & PERSISTENCE SECURITY BADGES -->
+  <!-- ========================================================================= -->
+  <footer class="border-t border-slate-800/60 bg-slate-950/80 px-6 py-4 mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Enkripsi Isolasi Multi-Tenant 256-bit Aktif • PostgreSQL ACID Protected</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>Server Region: <strong>Jakarta (WIB)</strong></span>
+        <span>Latensi Failover: <strong>&lt; 40ms</strong></span>
+        <span class="text-slate-600">|</span>
+        <span class="text-amber-400 font-semibold">AI COO Enterprise Resiliency</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function switchView(viewId) {
+      document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+      document.getElementById(viewId).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-800', 'text-white');
+        btn.classList.add('text-slate-400');
+      });
+
+      if (viewId === 'view-404') {
+        document.getElementById('btn-404').classList.add('bg-slate-800', 'text-white');
+      } else if (viewId === 'view-500') {
+        document.getElementById('btn-500').classList.add('bg-slate-800', 'text-white');
+      } else if (viewId === 'view-pos-offline') {
+        document.getElementById('btn-pos-offline').classList.add('bg-slate-800', 'text-white');
+      }
+    }
+
+    function simulateReconnect(btn) {
+      const label = document.getElementById('reconnect-text');
+      label.innerText = 'Menghubungkan ke API...';
+      btn.disabled = true;
+      btn.classList.add('opacity-80');
+
+      setTimeout(() => {
+        label.innerText = 'Sinkronisasi 3 Transaksi...';
+        setTimeout(() => {
+          label.innerText = 'Terhubung! (Online)';
+          btn.classList.remove('bg-amber-500', 'hover:bg-amber-400');
+          btn.classList.add('bg-emerald-500', 'text-slate-950');
+          setTimeout(() => {
+            label.innerText = 'Coba Hubungkan Ulang';
+            btn.classList.remove('bg-emerald-500', 'text-slate-950');
+            btn.classList.add('bg-amber-500', 'hover:bg-amber-400');
+            btn.disabled = false;
+            btn.classList.remove('opacity-80');
+          }, 2500);
+        }, 1200);
+      }, 1000);
+    }
+
+    function simulateReload(btn) {
+      const icon = document.getElementById('reload-icon');
+      const label = document.getElementById('reload-label');
+      icon.classList.add('animate-spin');
+      label.innerText = 'Memeriksa Pipeline...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        label.innerText = 'Berhasil Dipulihkan!';
+        btn.classList.remove('bg-amber-500');
+        btn.classList.add('bg-emerald-500');
+        setTimeout(() => {
+          label.innerText = 'Segarkan Halaman (Reload)';
+          btn.classList.remove('bg-emerald-500');
+          btn.classList.add('bg-amber-500');
+          btn.disabled = false;
+        }, 2000);
+      }, 1400);
+    }
+  </script>
+</body>
+</html>

@@ -5,17 +5,19 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   glass?: boolean;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, glass, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'rounded-xl border border-slate-800 bg-slate-900/50 text-slate-100 shadow-sm',
-      glass && 'bg-white/5 backdrop-blur-xl border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]',
-      className,
-    )}
-    {...props}
-  />
-));
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, glass = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        'rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md text-slate-100 shadow-xl overflow-hidden transition-colors',
+        glass && 'bg-slate-900/60 backdrop-blur-xl border-slate-700/60 shadow-2xl',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 Card.displayName = 'Card';
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
@@ -25,11 +27,11 @@ const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardHeader.displayName = 'CardHeader';
 
-const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
+const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
     <h3
       ref={ref}
-      className={cn('text-2xl font-semibold leading-none tracking-tight text-white', className)}
+      className={cn('text-lg sm:text-xl font-bold leading-tight tracking-tight text-white', className)}
       {...props}
     />
   ),
@@ -40,7 +42,7 @@ const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <p ref={ref} className={cn('text-sm text-slate-400', className)} {...props} />
+  <p ref={ref} className={cn('text-xs sm:text-sm text-slate-400 leading-relaxed', className)} {...props} />
 ));
 CardDescription.displayName = 'CardDescription';
 
@@ -53,9 +55,10 @@ CardContent.displayName = 'CardContent';
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('flex items-center p-6 pt-0', className)} {...props} />
+    <div ref={ref} className={cn('flex items-center p-6 pt-0 border-t border-slate-800/60 mt-4', className)} {...props} />
   ),
 );
 CardFooter.displayName = 'CardFooter';
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+
