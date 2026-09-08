@@ -18,19 +18,20 @@ describe('CreateSaleUseCase', () => {
   });
 
   it('should create and save a new sale within tenant context', async () => {
-    const saleId = 'sale-123';
-    mockRepository.findById.mockImplementation(async (id: string) => {
-      return Sale.create(
-        {
-          companyId: 'company-abc',
-          customerId: 'customer-1',
-          amount: 50000,
-          paymentMethod: PaymentMethod.CASH,
-          paidAmount: 50000,
-          changeAmount: 0,
-          items: [],
-        },
-        id,
+    mockRepository.findById.mockImplementation((id: string) => {
+      return Promise.resolve(
+        Sale.create(
+          {
+            companyId: 'company-abc',
+            customerId: 'customer-1',
+            amount: 50000,
+            paymentMethod: PaymentMethod.CASH,
+            paidAmount: 50000,
+            changeAmount: 0,
+            items: [],
+          },
+          id,
+        ),
       );
     });
 
