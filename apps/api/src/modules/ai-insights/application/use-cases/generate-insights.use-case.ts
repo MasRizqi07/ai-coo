@@ -59,9 +59,26 @@ export class GenerateInsightsUseCase {
     private readonly analyticsService: AnalyticsService,
     private readonly configService: ConfigService,
   ) {
-    const host = this.configService.get<string>('REDIS_HOST') || 'localhost';
+    const host = this.configService.get<string>('REDIS_HOST') || '127.0.0.1';
     const port = Number(this.configService.get<number>('REDIS_PORT')) || 6379;
-    this.redis = new Redis({ host, port });
+    this.redis = new Redis({
+      host,
+      port,
+      lazyConnect: true,
+      enableOfflineQueue: false,
+      maxRetriesPerRequest: 1,
+      retryStrategy: (times) => {
+        if (times > 3) {
+          return 30000;
+        }
+        return Math.min(times * 1000, 5000);
+      },
+    });
+
+    // Suppress unhandled error event on Redis client to keep logs clean when Redis is offline
+    this.redis.on('error', (err) => {
+      this.logger.warn(`Redis connection offline: ${err.message}. Using database fallback.`);
+    });
   }
 
   async execute(companyId: string): Promise<InsightPayload & { isStale?: boolean }> {
@@ -71,8 +88,16 @@ export class GenerateInsightsUseCase {
       // 1. Attempt to generate fresh insight
       const insight = await this.generateFresh(companyId);
 
-      // Cache the valid payload for 24 hours
-      await this.redis.setex(cacheKey, 24 * 60 * 60, JSON.stringify(insight));
+      // Cache the valid payload for 24 hours if Redis is connected
+      try {
+        if (this.redis.status === 'ready') {
+          await this.redis.setex(cacheKey, 24 * 60 * 60, JSON.stringify(insight));
+        }
+      } catch (cacheErr) {
+        this.logger.warn(
+          `Failed to set Redis cache: ${cacheErr instanceof Error ? cacheErr.message : String(cacheErr)}`,
+        );
+      }
 
       return insight;
     } catch (error) {
@@ -81,15 +106,17 @@ export class GenerateInsightsUseCase {
         error,
       );
 
-      // 2. Fallback to cache
-      const cached = await this.redis.get(cacheKey);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached) as InsightPayload;
-          return { ...parsed, isStale: true };
-        } catch {
-          // Ignore parse errors on cached payload
+      // 2. Fallback to cache if Redis is connected
+      try {
+        if (this.redis.status === 'ready') {
+          const cached = await this.redis.get(cacheKey);
+          if (cached) {
+            const parsed = JSON.parse(cached) as InsightPayload;
+            return { ...parsed, isStale: true };
+          }
         }
+      } catch {
+        // Ignore parse or connection errors on cached payload
       }
 
       // 3. Fallback to database

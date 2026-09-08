@@ -11,8 +11,10 @@ import { IAIProvider } from '../../domain/services/ai-provider.interface';
 jest.mock('ioredis', () => {
   return jest.fn().mockImplementation(() => {
     return {
+      status: 'ready',
       get: jest.fn().mockResolvedValue(null),
       setex: jest.fn().mockResolvedValue('OK'),
+      on: jest.fn(),
     };
   });
 });

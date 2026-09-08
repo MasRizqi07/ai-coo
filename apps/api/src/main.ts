@@ -56,6 +56,8 @@ async function bootstrap() {
   }
 
   await app.listen(port);
+  console.log(`\n🚀 AI COO API server listening on http://localhost:${port}`);
+  console.log(`📚 Swagger documentation available at http://localhost:${port}/api/docs\n`);
 }
 
 void bootstrap();

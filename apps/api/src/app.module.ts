@@ -25,8 +25,17 @@ import { CompaniesModule } from './modules/companies/companies.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         connection: {
-          host: configService.get<string>('REDIS_HOST') || 'localhost',
+          host: configService.get<string>('REDIS_HOST') || '127.0.0.1',
           port: Number(configService.get('REDIS_PORT')) || 6379,
+          maxRetriesPerRequest: null,
+          enableOfflineQueue: false,
+          retryStrategy: (times: number) => {
+            // Exponential backoff when Redis is unavailable to prevent endless aggressive terminal spam
+            if (times > 3) {
+              return 30000;
+            }
+            return Math.min(times * 1000, 5000);
+          },
         },
       }),
     }),
