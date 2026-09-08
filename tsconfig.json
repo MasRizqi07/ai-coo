@@ -1,8 +1,12 @@
 {
-  "extends": "../packages/tsconfig/base.json",
   "compilerOptions": {
+    "target": "ES2022",
     "module": "CommonJS",
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   }
 }
 

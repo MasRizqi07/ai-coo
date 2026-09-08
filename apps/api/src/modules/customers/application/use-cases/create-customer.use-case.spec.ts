@@ -10,7 +10,8 @@ describe('CreateCustomerUseCase', () => {
     mockRepository = {
       save: jest.fn().mockResolvedValue(undefined),
       findById: jest.fn(),
-      findAllByCompany: jest.fn(),
+      findAll: jest.fn(),
+      delete: jest.fn(),
     };
     useCase = new CreateCustomerUseCase(mockRepository);
   });

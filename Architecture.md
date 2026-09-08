@@ -1,10 +1,6 @@
 # System Architecture Document
 ## AI COO — Technical & Enterprise Architecture Specification
 
-> **Catatan Dokumen**: Dokumen ini merupakan referensi resmi arsitektur sistem AI COO. Dokumen identik juga dapat diakses pada [Architectur.md](file:///d:/MY%20CODE/ANTIGRAVITY/01-production/ai-coo/Architectur.md).
-
----
-
 ## 1. Executive System Architecture Overview
 
 **AI COO** mengadopsi pola **Modular Monorepo** berbasis **Clean Architecture** (Domain-Driven Design principles) di sisi backend (NestJS 11) dan **Modern Hybrid Architecture** (Server Components + Server Actions + Client Views) di sisi frontend (Next.js 15).

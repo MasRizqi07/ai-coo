@@ -8,6 +8,7 @@
     "generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint src/"
   },
   "dependencies": {

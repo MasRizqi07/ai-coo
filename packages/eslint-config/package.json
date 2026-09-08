@@ -11,6 +11,7 @@
   "scripts": {
     "build": "echo \"No build needed\" && exit 0",
     "lint": "echo \"No lint needed\" && exit 0",
+    "typecheck": "echo \"No typecheck needed\" && exit 0",
     "test": "echo \"No tests\" && exit 0"
   },
   "dependencies": {

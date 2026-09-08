@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { createSaleAction } from '../../actions/sales';
 import { toast } from 'sonner';
-import { Customer, Product, Sale } from '@ai-coo/shared-types';
+import { Customer, Product, Sale, PaymentMethod } from '@ai-coo/shared-types';
 
 interface CompletedSaleItem {
   name: string;
@@ -29,13 +29,13 @@ interface CompletedSaleItem {
   subtotal: number;
 }
 
-interface CompletedSale extends Partial<Sale> {
+interface CompletedSale extends Omit<Partial<Sale>, 'paymentMethod'> {
   customerName: string;
   customerPhone?: string;
   total: number;
   paid: number;
   change: number;
-  paymentMethod: 'CASH' | 'QRIS' | 'TRANSFER';
+  paymentMethod: PaymentMethod | 'CASH' | 'QRIS' | 'TRANSFER';
   itemsDetailed: CompletedSaleItem[];
 }
 

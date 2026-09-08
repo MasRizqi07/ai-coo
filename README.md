@@ -19,7 +19,7 @@ Untuk tinjauan mendalam mengenai setiap aspek platform, silakan merujuk ke dokum
 | Dokumen | Tautan | Deskripsi |
 | :--- | :--- | :--- |
 | **Product Requirements Document** | [PRD.md](file:///d:/MY%20CODE/ANTIGRAVITY/01-production/ai-coo/PRD.md) | Kebutuhan produk lengkap, persona pengguna, metrik keberhasilan (OKRs), dan roadmap. |
-| **System Architecture** | [Architectur.md](file:///d:/MY%20CODE/ANTIGRAVITY/01-production/ai-coo/Architectur.md) | Arsitektur Clean Architecture, isolasi multi-tenant, BullMQ worker, ERD, dan topologi produksi. |
+| **System Architecture** | [Architecture.md](file:///d:/MY%20CODE/ANTIGRAVITY/01-production/ai-coo/Architecture.md) | Arsitektur Clean Architecture, isolasi multi-tenant, BullMQ worker, ERD, dan topologi produksi. |
 | **UI/UX & Product Design** | [Design.md](file:///d:/MY%20CODE/ANTIGRAVITY/01-production/ai-coo/Design.md) | Spesifikasi layar lengkap, alur pengguna (*User Journeys*), POS checkout, dan struk digital. |
 | **Design System & Tokens** | [Design_System.md](file:///d:/MY%20CODE/ANTIGRAVITY/01-production/ai-coo/Design_System.md) | Palet warna Tailwind v4, tipografi, komponen UI, token gerak (*Framer Motion*), dan lokalisasi IDR. |
 

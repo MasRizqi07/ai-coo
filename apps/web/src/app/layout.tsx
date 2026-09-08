@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import { Toaster } from 'sonner';
 
-const inter = Inter({
+const inter = localFont({
+  src: '../../public/fonts/Inter-Variable.ttf',
   variable: '--font-inter',
-  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

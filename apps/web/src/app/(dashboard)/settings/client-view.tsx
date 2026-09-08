@@ -18,7 +18,9 @@ import { updateCompanyAction } from '../../actions/companies';
 import { toast } from 'sonner';
 import { UserProfile } from '@ai-coo/shared-types';
 
-type CompanyProfile = UserProfile['company'];
+type CompanyProfile = NonNullable<UserProfile['company']> & {
+  _count?: { products: number; customers: number; sales: number };
+};
 
 export default function SettingsClientView({
   initialCompany,
@@ -102,7 +104,11 @@ export default function SettingsClientView({
                 <Label htmlFor="businessType">Kategori Bisnis</Label>
                 <Input
                   id="businessType"
-                  value={typeLabels[initialCompany?.businessType] || initialCompany?.businessType || 'RETAIL'}
+                  value={
+                    (initialCompany?.businessType && typeLabels[initialCompany.businessType]) ||
+                    initialCompany?.businessType ||
+                    'RETAIL'
+                  }
                   disabled
                   className="bg-slate-950/40 text-slate-400 cursor-not-allowed"
                 />
