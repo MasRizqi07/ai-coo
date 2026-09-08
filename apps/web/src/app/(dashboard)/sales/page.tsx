@@ -1,5 +1,5 @@
 import { fetchApi } from '../../../lib/api';
-import { getToken } from '../../actions/auth';
+import { getToken, getMeAction } from '../../actions/auth';
 import { redirect } from 'next/navigation';
 import { Sale, Customer, Product } from '@ai-coo/shared-types';
 import SalesClientView from './client-view';
@@ -12,21 +12,32 @@ export default async function SalesPage() {
   }
 
   try {
-    const [sales, customers, products] = await Promise.all([
-      fetchApi<Sale[]>('/sales', { token }),
-      fetchApi<Customer[]>('/customers', { token }),
-      fetchApi<Product[]>('/products', { token }),
+    const [sales, customers, products, userProfile] = await Promise.all([
+      fetchApi<Sale[]>('/sales', { token }).catch(() => []),
+      fetchApi<Customer[]>('/customers', { token }).catch(() => []),
+      fetchApi<Product[]>('/products', { token }).catch(() => []),
+      getMeAction().catch(() => null),
     ]);
 
     return (
       <SalesClientView
         initialSales={sales}
         customers={customers}
-        products={products.filter((p: Product) => p.stockQuantity > 0)}
+        products={products}
+        storeName={userProfile?.company?.name || 'AI COO POS'}
+        cashierName={userProfile?.name || 'Kasir'}
       />
     );
   } catch (error) {
     console.error('Failed to fetch sales data', error);
-    return <SalesClientView initialSales={[]} customers={[]} products={[]} />;
+    return (
+      <SalesClientView
+        initialSales={[]}
+        customers={[]}
+        products={[]}
+        storeName="AI COO POS"
+        cashierName="Kasir"
+      />
+    );
   }
 }

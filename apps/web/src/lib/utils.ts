@@ -79,10 +79,12 @@ export function formatPhoneNumberIndonesian(phone?: string | null): string {
   return cleaned;
 }
 
+import type { Variants } from 'framer-motion';
+
 /**
  * Framer Motion Animation Variants for consistent page transitions
  */
-export const pageMotionVariants = {
+export const pageMotionVariants: Variants = {
   hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
@@ -95,13 +97,13 @@ export const pageMotionVariants = {
 /**
  * Framer Motion Variants for Modal Dialogs
  */
-export const modalBackdropVariants = {
+export const modalBackdropVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.2 } },
   exit: { opacity: 0, transition: { duration: 0.15 } },
 };
 
-export const modalDialogVariants = {
+export const modalDialogVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95, y: 10 },
   visible: {
     opacity: 1,
@@ -111,4 +113,5 @@ export const modalDialogVariants = {
   },
   exit: { opacity: 0, scale: 0.95, y: 8, transition: { duration: 0.15 } },
 };
+
 
